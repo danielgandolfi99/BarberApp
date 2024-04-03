@@ -11,5 +11,7 @@ Para começar, siga os passos abaixo:
 * No vscode execute o seguinte comando para instalar o Expo ```npm install expo```
   
 * Após execute o seguinte comando para rodar o projeto ```npx expo start```
+
+* Depois execute o comando ```npm i``` para instalar as dependências do projeto
   
-* Por fim baixe o aplicativo ExpoGo no seu dispositivo android e escaneie o código de barras que aparecerá no terminal para rodar o projeto
+* Por fim baixe o aplicativo ExpoGo no seu dispositivo e escaneie o código de barras que aparecerá no terminal para rodar o projeto
