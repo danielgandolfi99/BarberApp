@@ -1,19 +1,31 @@
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button } from "@rneui/base";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
 const Login = () => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.text}>Email</Text>
+        <Text style={styles.text}>E-mail</Text>
         <TextInput style={styles.input} />
       </View>
       <View style={styles.row}>
         <Text style={styles.text}>Senha</Text>
         <TextInput style={styles.input} />
+        
       </View>
       <View style={styles.row}>
-        <View style={styles.button}>
-          <Button title="Entrar" color="#9D4EDD"></Button>
+        <View>
+          <Button
+            title="Entrar"
+            color="#9D4EDD"
+            titleStyle={{    fontFamily: "Montserrat",
+            fontWeight: "bold",
+            fontSize: 20,
+          alignItems: 'center'}}
+          buttonStyle={{alignItems: 'center', justifyContent: 'center'}}
+            // color="error"
+            containerStyle={styles.button}
+          />
         </View>
       </View>
     </View>
@@ -25,7 +37,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#72A9BB",
+    backgroundColor: "#7B2CBF",
     shadowColor: "#7B2CBF",
     shadowOffset: { width: 0, height: 2 }, // Deslocamento da sombra
     shadowOpacity: 0.5, // Opacidade da sombra
@@ -41,15 +53,24 @@ const styles = StyleSheet.create({
     width: 295,
     height: 40,
     borderRadius: 10,
-    borderWidth: 1,
     padding: 10,
-    backgroundColor: "#7B2CBF",
+    backgroundColor: "#9D4EDD",
+    
+    shadowColor:'#7B2CBF',
+    shadowOffset: {
+        width: 2,
+        height: 2,
+    },
+    shadowOpacity: 0,
+    shadowRadius: 10,
+    elevation: 4,
+    
   },
   text: {
-    // fontFamily: 'Montserrat',
+    fontFamily: 'Montserrat',
     color: "#fff",
     marginBottom: 5,
-    fontWeight: "500",
+    fontWeight: "bold",
     fontSize: 12,
   },
   button: {
@@ -57,6 +78,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 10,
     overflow: "hidden",
+    fontFamily: "Montserrat",
+    fontWeight: "bold",
+    fontSize: 20,
   },
 });
 export default Login;
