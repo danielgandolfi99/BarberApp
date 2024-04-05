@@ -6,7 +6,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const Stack = createStackNavigator();
 
-
 const MyTheme = {
   ...DefaultTheme,
   colors: {

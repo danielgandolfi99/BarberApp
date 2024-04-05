@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/base";
 import { useState } from "react";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 import TextInputStyled from "../../components/TextInputStyled";
 import { styles } from "../../components/stylesComponents";
 import ButtonStyled from "../../components/ButtonStyled";
@@ -13,7 +13,19 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  function isValidEmail() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   const handleSubmit = () => {
+    if (!isValidEmail()) {
+      Alert.alert('Email Incorreto', 'Por favor, insira um endereço de e-mail válido.');
+      return;
+    }
+    if (!password && password.length < 6) {
+      Alert.alert('Senha Fraca', 'A senha precisa conter pelo menos 6 caracteres.');
+    }
     console.log("Email: " + email);
     console.log("Senha: " + password);
   };
@@ -28,8 +40,8 @@ const Login = () => {
       <View style={styles.row}>
         <Image source={require("../../../assets/login.png")} style={styles.img} />
       </View>
-      <TextInputStyled textName="E-mail" value={email} setValue={setEmail}/>
-      <TextInputStyled textName="Senha" value={password} setValue={setPassword}/>
+      <TextInputStyled textName="E-mail" value={email} setValue={setEmail} placeholder="Digite seu e-mail" autoCapitalizeNone />
+      <TextInputStyled textName="Senha" value={password} setValue={setPassword} secureTextEntry autoCapitalizeNone />
       <ButtonStyled name="Entrar" onPress={handleSubmit} />
       <View style={styles.row}>
         <Text style={styles.text2} onPress={handleOpenCadastro}>
