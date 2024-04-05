@@ -19,38 +19,71 @@ const Login = () => {
   }
 
   const handleSubmit = () => {
+    if (!email || !password) {
+      Alert.alert("Email Incorreto", "Preencha usuário e senha!");
+    }
     if (!isValidEmail()) {
-      Alert.alert('Email Incorreto', 'Por favor, insira um endereço de e-mail válido.');
+      Alert.alert(
+        "Email Incorreto",
+        "Por favor, insira um endereço de e-mail válido."
+      );
       return;
     }
-    if (!password && password.length < 6) {
-      Alert.alert('Senha Fraca', 'A senha precisa conter pelo menos 6 caracteres.');
+    if (password && password.length < 6) {
+      Alert.alert(
+        "Senha Fraca",
+        "A senha precisa conter pelo menos 6 caracteres."
+      );
     }
     console.log("Email: " + email);
     console.log("Senha: " + password);
   };
 
   const handleOpenCadastro = () => {
-    navigation.navigate("Cadastro");
+    navigation.navigate({ name: "Cadastro" } as never);
   };
 
   return (
     <View style={styles.container}>
       <TextTitleStyled />
       <View style={styles.row}>
-        <Image source={require("../../../assets/login.png")} style={styles.img} />
+        <Image
+          source={require("../../../assets/login.png")}
+          style={styles.img}
+        />
       </View>
-      <TextInputStyled textName="E-mail" value={email} setValue={setEmail} placeholder="Digite seu e-mail" autoCapitalizeNone />
-      <TextInputStyled textName="Senha" value={password} setValue={setPassword} secureTextEntry autoCapitalizeNone />
+      <TextInputStyled
+        textName="E-mail"
+        value={email}
+        setValue={setEmail}
+        placeholder="Digite seu e-mail"
+        autoCapitalizeNone
+      />
+      <TextInputStyled
+        textName="Senha"
+        value={password}
+        setValue={setPassword}
+        placeholder="Digite sua senha"
+        secureTextEntry
+        autoCapitalizeNone
+      />
       <ButtonStyled name="Entrar" onPress={handleSubmit} />
       <View style={styles.row}>
-        <Text style={styles.text2} onPress={handleOpenCadastro}>
-          Não possui conta? Cadastre-se
-        </Text>
+        <Button
+          title="Não possui conta? Cadastre-se"
+          color="transparent"
+          titleStyle={{
+            fontFamily: "Montserrat",
+            fontWeight: "bold",
+            fontSize: 12,
+            textDecorationLine: "underline",
+          }}
+          style={styles.button}
+          onPress={handleOpenCadastro}
+        />
       </View>
     </View>
   );
 };
-
 
 export default Login;
