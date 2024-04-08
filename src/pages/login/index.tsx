@@ -73,10 +73,12 @@ const Login = () => {
           title="Não possui conta? Cadastre-se"
           color="transparent"
           titleStyle={{
-            fontFamily: "Montserrat",
+            // fontFamily: "Montserrat_500Medium",
             fontWeight: "bold",
             fontSize: 12,
             textDecorationLine: "underline",
+            color: "#fff",
+            
           }}
           style={styles.button}
           onPress={handleOpenCadastro}
