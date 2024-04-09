@@ -11,6 +11,12 @@ export const styles = StyleSheet.create({
       alignItems: "flex-start",
       marginBottom: 15,
     },
+    row2: {
+      flexDirection: "column",
+      alignItems: "flex-start",
+      marginTop: 30,
+      marginBottom: 15
+    },
     input: {
       width: 295,
       height: 40,
@@ -38,6 +44,7 @@ export const styles = StyleSheet.create({
       // fontFamily: "Montserrat",
       color: "#fff",
       marginTop: 15,
+      marginBottom: 100,
       fontWeight: "bold",
       fontSize: 12,
       textDecorationLine: "underline",
@@ -48,6 +55,14 @@ export const styles = StyleSheet.create({
       height: 40,
       borderRadius: 10,
       padding: 1,
+    },
+    subtitle: {
+      // fontFamily: "Montserrat",
+      fontSize: 24,
+      color: "#fff",
+      fontWeight: "bold",
+      marginTop: 10,
+      marginBottom: 20
     },
     title: {
       // fontFamily: "Montserrat",
