@@ -14,7 +14,7 @@ export default function ButtonStyled({ name, onPress }: ButtonProps) {
         title={name}
         color="#9D4EDD"
         titleStyle={{
-          fontWeight: "bold",
+          fontFamily: "Montserrat_700Bold",
           fontSize: 20,
         }}
         buttonStyle={styles.button}
