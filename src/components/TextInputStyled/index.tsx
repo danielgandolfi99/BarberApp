@@ -69,6 +69,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 10,
     padding: 10,
+    fontFamily: "Montserrat_500Medium",
+    fontSize: 12,
     color: "#fff",
     backgroundColor: "#9D4EDD",
     shadowColor: "#7B2CBF",
@@ -81,10 +83,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   text: {
-    // fontFamily: "Montserrat",
+    fontFamily: "Montserrat_700Bold",
     color: "#fff",
     marginBottom: 5,
-    fontWeight: "bold",
     fontSize: 12,
   },
   icon: {

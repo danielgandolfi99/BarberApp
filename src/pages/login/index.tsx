@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/base";
 import { useState } from "react";
-import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, View } from "react-native";
 import TextInputStyled from "../../components/TextInputStyled";
 import { styles } from "../../components/stylesComponents";
 import ButtonStyled from "../../components/ButtonStyled";
@@ -73,8 +73,7 @@ const Login = () => {
           title="Não possui conta? Cadastre-se"
           color="transparent"
           titleStyle={{
-            // fontFamily: "Montserrat_500Medium",
-            fontWeight: "bold",
+            fontFamily: "Montserrat_700Bold",
             fontSize: 12,
             textDecorationLine: "underline",
             color: "#fff",

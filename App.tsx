@@ -1,14 +1,14 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import Login from "./src/pages/login";
-import {
-  DefaultTheme,
-  NavigationContainer,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import Cadastro from "./src/pages/cadastro";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFonts, Montserrat_700Bold_Italic } from "@expo-google-fonts/montserrat";
-
+import {
+  useFonts,
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+  Montserrat_500Medium,
+} from "@expo-google-fonts/montserrat";
 
 const Stack = createStackNavigator();
 
@@ -17,11 +17,20 @@ const MyTheme = {
   colors: {
     ...DefaultTheme.colors,
     background: "transparent",
-  }
+  },
 };
 
 export default function App() {
- 
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_700Bold,
+    Montserrat_500Medium,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <LinearGradient
       colors={["rgba(123,44,191,1)", "rgba(34,29,37,1)"]}

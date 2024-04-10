@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
@@ -37,7 +37,6 @@ export const styles = StyleSheet.create({
       // fontFamily: "Montserrat",
       color: "#fff",
       marginBottom: 5,
-      fontWeight: "bold",
       fontSize: 12,
     },
     text2: {
@@ -45,7 +44,6 @@ export const styles = StyleSheet.create({
       color: "#fff",
       marginTop: 15,
       marginBottom: 100,
-      fontWeight: "bold",
       fontSize: 12,
       textDecorationLine: "underline",
     },
@@ -60,7 +58,6 @@ export const styles = StyleSheet.create({
       // fontFamily: "Montserrat",
       fontSize: 24,
       color: "#fff",
-      fontWeight: "bold",
       marginTop: 10,
       marginBottom: 20
     },
@@ -68,7 +65,6 @@ export const styles = StyleSheet.create({
       // fontFamily: "Montserrat",
       fontSize: 48,
       color: "#fff",
-      fontWeight: "bold",
     },
     img: {
       width: 403,
