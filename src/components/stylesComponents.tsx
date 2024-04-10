@@ -34,13 +34,13 @@ export const styles = StyleSheet.create({
       elevation: 4,
     },
     text: {
-      // fontFamily: "Montserrat",
+      fontFamily: "Montserrat_700Bold",
       color: "#fff",
       marginBottom: 5,
       fontSize: 12,
     },
     text2: {
-      // fontFamily: "Montserrat",
+      fontFamily: "Montserrat_700Bold",
       color: "#fff",
       marginTop: 15,
       marginBottom: 100,
@@ -55,14 +55,14 @@ export const styles = StyleSheet.create({
       padding: 1,
     },
     subtitle: {
-      // fontFamily: "Montserrat",
+      fontFamily: "Montserrat_700Bold",
       fontSize: 24,
       color: "#fff",
       marginTop: 10,
       marginBottom: 20
     },
     title: {
-      // fontFamily: "Montserrat",
+      fontFamily: "Montserrat_700Bold",
       fontSize: 48,
       color: "#fff",
     },
