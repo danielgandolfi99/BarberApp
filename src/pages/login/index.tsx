@@ -20,16 +20,16 @@ const Login = () => {
 
   const handleSubmit = () => {
     if (!email || !password) {
-      Alert.alert("Email Incorreto", "Preencha usuário e senha!");
+      Alert.alert("Formulário incompleto!", "Preencha todos os campos para entrar.");
     }
-    if (!isValidEmail()) {
+    else if (!isValidEmail()) {
       Alert.alert(
         "Email Incorreto",
         "Por favor, insira um endereço de e-mail válido."
       );
       return;
     }
-    if (password && password.length < 6) {
+    else if (password && password.length < 6) {
       Alert.alert(
         "Senha Fraca",
         "A senha precisa conter pelo menos 6 caracteres."

@@ -10,6 +10,7 @@ interface TextProps {
   secureTextEntry?: boolean;
   placeholder?: string;
   autoCapitalizeNone?: boolean;
+  keyboardTypeNumeric?: boolean;
 }
 
 function TextInputStyled({
@@ -19,6 +20,7 @@ function TextInputStyled({
   secureTextEntry,
   placeholder,
   autoCapitalizeNone,
+  keyboardTypeNumeric
 }: TextProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,6 +39,7 @@ function TextInputStyled({
           secureTextEntry={secureTextEntry ? !showPassword : false}
           placeholder={placeholder}
           autoCapitalize={autoCapitalizeNone ? "none" : "sentences"}
+          keyboardType={keyboardTypeNumeric ? 'numeric' : 'default'}
         />
         {secureTextEntry && (
           <TouchableOpacity

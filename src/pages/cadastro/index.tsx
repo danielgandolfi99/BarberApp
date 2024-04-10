@@ -24,40 +24,50 @@ const Cadastro = () => {
 
   function isValidCelular() {
     const celularRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
-    return celularRegex.test(celular)
+    return celularRegex.test(celular);
   }
 
-  const handleSubmit = () => {
+  const handleInputChange = (text: string) => {
+    const numericValue = text.replace(/[^0-9]/g, "");
+    setCelular(numericValue);
+  };
+
+  function checkValidSubmit(): boolean {
     if (!nome || !sobrenome || !celular || !email || !password) {
       Alert.alert("Formulário incompleto", "Preencha todos os campos!");
-      return;
-    }
-    if (!isValidCelular()) {
+      return false;
+    } else if (!isValidCelular()) {
       Alert.alert(
         "Número de celular inválido",
         "Por favor, insira um número de celular válido."
       );
-      return;
-    }
-    if (!isValidEmail()) {
+      return false;
+    } else if (!isValidEmail()) {
       Alert.alert(
         "Email Incorreto",
         "Por favor, insira um endereço de e-mail válido."
       );
-      return;
-    }
-    if (password && password.length < 6) {
+      return false;
+    } else if (password && password.length < 6) {
       Alert.alert(
         "Senha Fraca",
         "A senha precisa conter pelo menos 6 caracteres."
       );
-      return;
+      return false;
+    } else {
+      Alert.alert(
+        "Cadastro concluido com sucesso!",
+        "Efetue o login para acessar sua conta."
+      );
     }
-    Alert.alert(
-        "Cadastro concluido",
-        "O cadastro de usuário foi concluido com sucesso!"
-    );
-    navigation.goBack();
+    return true;
+  }
+
+  const handleSubmit = () => {
+    const check = checkValidSubmit();
+    if (check) {
+      navigation.goBack();
+    }
   };
 
   return (
@@ -81,9 +91,10 @@ const Cadastro = () => {
       <TextInputStyled
         textName="Celular"
         value={celular}
-        setValue={setCelular}
+        setValue={handleInputChange}
         placeholder="Digite seu celular"
         autoCapitalizeNone
+        keyboardTypeNumeric
       />
       <TextInputStyled
         textName="E-mail"
@@ -104,8 +115,6 @@ const Cadastro = () => {
         <ButtonStyled name="Confirmar" onPress={handleSubmit} />
       </View>
     </View>
-
-    
   );
 };
 export default Cadastro;
