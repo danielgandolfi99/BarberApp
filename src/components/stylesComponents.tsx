@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
       textDecorationLine: "underline",
     },
     button: {
-      marginTop: 20,
+      marginTop: 15,
       width: 201,
       height: 40,
       borderRadius: 10,

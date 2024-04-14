@@ -15,7 +15,6 @@ export default function Header({
   title,
   subtitle,
 }: HeaderProps) {
-
   return (
     <View style={{ width: "100%", margin: 0 }}>
       <LinearGradient
@@ -23,16 +22,7 @@ export default function Header({
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
       >
-        <Card
-          containerStyle={{
-            height: 100,
-            width: "100%",
-            justifyContent: "flex-end",
-            paddingBottom: 15,
-            backgroundColor: "transparent",
-            margin: 0,
-          }}
-        >
+        <Card containerStyle={styles.card}>
           <View
             style={{
               flexDirection: "row",
@@ -45,30 +35,13 @@ export default function Header({
                 name="chevron-left"
                 color="#ffffff"
                 size={20}
-                style={{ marginRight: 15, marginLeft: 0 }}
+                style={styles.icon}
               />
             </Button>
 
             <View style={{ flexDirection: "column" }}>
-              <Text
-                style={{
-                  fontFamily: "Ubuntu_400Regular",
-                  fontSize: 17,
-                  color: "#fff",
-                  marginBottom: 5,
-                }}
-              >
-                {title}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "Ubuntu_300Light",
-                  fontSize: 12,
-                  color: "#fff",
-                }}
-              >
-                {subtitle}
-              </Text>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
           </View>
         </Card>
@@ -77,4 +50,28 @@ export default function Header({
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  card: {
+    height: 100,
+    width: "100%",
+    justifyContent: "flex-end",
+    paddingBottom: 15,
+    backgroundColor: "transparent",
+    margin: 0,
+  },
+  icon: {
+    marginRight: 15,
+    marginLeft: 0,
+  },
+  title: {
+    fontFamily: "Ubuntu_400Regular",
+    fontSize: 17,
+    color: "#fff",
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontFamily: "Ubuntu_300Light",
+    fontSize: 12,
+    color: "#fff",
+  },
+});
