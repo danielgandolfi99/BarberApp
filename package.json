@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/montserrat": "^0.2.3",
+    "@expo-google-fonts/ubuntu": "^0.2.3",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "@rneui/base": "^4.0.0-rc.7",
