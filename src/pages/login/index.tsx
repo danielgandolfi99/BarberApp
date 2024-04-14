@@ -20,23 +20,26 @@ const Login = () => {
 
   const handleSubmit = () => {
     if (!email || !password) {
-      Alert.alert("Formulário incompleto!", "Preencha todos os campos para entrar.");
-    }
-    else if (!isValidEmail()) {
+      Alert.alert(
+        "Formulário incompleto!",
+        "Preencha todos os campos para entrar."
+      );
+    } else if (!isValidEmail()) {
       Alert.alert(
         "Email Incorreto",
         "Por favor, insira um endereço de e-mail válido."
       );
       return;
-    }
-    else if (password && password.length < 6) {
+    } else if (password && password.length < 6) {
       Alert.alert(
         "Senha Fraca",
         "A senha precisa conter pelo menos 6 caracteres."
       );
+    } else {
+      console.log("Email: " + email);
+      console.log("Senha: " + password);
+      navigation.navigate({ name: "Cadastro Barbeiros" } as never);
     }
-    console.log("Email: " + email);
-    console.log("Senha: " + password);
   };
 
   const handleOpenCadastro = () => {
@@ -77,7 +80,6 @@ const Login = () => {
             fontSize: 12,
             textDecorationLine: "underline",
             color: "#fff",
-            
           }}
           style={styles.button}
           onPress={handleOpenCadastro}
