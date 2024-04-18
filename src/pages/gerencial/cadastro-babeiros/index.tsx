@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { Modal, ScrollView, View } from "react-native";
 import { styles } from "../../../components/stylesComponents";
 import ButtonStyled from "../../../components/ButtonStyled";
 import { Avatar, Card, Text } from "@rneui/base";
@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import BarberRegistrationCard, {
   BarberRegistrationCardProps,
 } from "../../../components/BarberRegistrationCard";
+import BarberRegistrationModal from "../../../components/Modals/BarberRegistrationModal";
+import { useState } from "react";
 
 const testExample: BarberRegistrationCardProps[] = [
   { name: "Daniel", scheduled: 20, performed: 15 },
@@ -25,6 +27,8 @@ const CadastroBarbeiros = () => {
   const handleReturn = () => {
     navigation.goBack();
   };
+
+  const [visibleModal, setVisibleModal] = useState(false)
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1, alignItems: "center" }}>
@@ -43,7 +47,15 @@ const CadastroBarbeiros = () => {
             />
           ))}
       </ScrollView>
-      <ButtonStyled name="Adicionar" onPress={() => {}} />
+      <ButtonStyled name="Adicionar" onPress={() => setVisibleModal(true)} />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visibleModal}
+        onRequestClose={() => setVisibleModal(false)}
+      >
+        <BarberRegistrationModal handleClose={ () => setVisibleModal(false) }/>
+      </Modal>
     </View>
   );
 };

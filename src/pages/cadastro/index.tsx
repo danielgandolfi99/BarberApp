@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/base";
 import { useState } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, TouchableOpacity, Text } from "react-native";
 import ButtonStyled from "../../components/ButtonStyled";
 import { styles } from "../../components/stylesComponents";
 import TextSubtitleStyled from "../../components/TextSubtitleStyled";
@@ -63,10 +63,14 @@ const Cadastro = () => {
     return true;
   }
 
+  const goBack = () => {
+      navigation.goBack();
+  };
+
   const handleSubmit = () => {
     const check = checkValidSubmit();
     if (check) {
-      navigation.goBack();
+      goBack();
     }
   };
 
@@ -114,6 +118,16 @@ const Cadastro = () => {
       <View style={styles.row2}>
         <ButtonStyled name="Confirmar" onPress={handleSubmit} />
       </View>
+      <TouchableOpacity onPress={goBack}>
+        <Text style={
+          {fontFamily: "Montserrat_700Bold", 
+          fontSize: 20, 
+          color: "#fff", 
+          marginTop: 10}
+        }>
+          Cancelar
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
