@@ -39,8 +39,9 @@ const CadastroBarbeiros = () => {
       />
       <ScrollView style={{ height: "80%" }}>
         {testExample &&
-          testExample.map((value) => (
+          testExample.map((value, index) => (
             <BarberRegistrationCard
+              key={index}
               name={value.name}
               scheduled={value.scheduled}
               performed={value.performed}
