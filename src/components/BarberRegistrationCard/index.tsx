@@ -1,8 +1,10 @@
 import { Avatar, Button, Card } from "@rneui/base";
-import { Text, View } from "react-native";
+import { Modal, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Dialog } from "@rneui/themed";
+import { Camera } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 
 export interface BarberRegistrationCardProps {
   name: string;
@@ -17,6 +19,9 @@ export default function BarberRegistrationCard({
   performed,
 }: BarberRegistrationCardProps) {
   const [deleteRegister, setDeleteRegister] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const cameraRef = useRef<Camera | null>(null);
 
   const handleDeleteRegister = () => {
     closeDeleteRegister();
@@ -24,6 +29,35 @@ export default function BarberRegistrationCard({
 
   const closeDeleteRegister = () => {
     setDeleteRegister(false);
+  };
+
+  const takePicture = async () => {
+    setShowModal(false);
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync();
+      setImage(photo.uri);
+    }
+  };
+
+  const pickImageFromGallery = async () => {
+    setShowModal(false);
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("O aplicativo não possui permissão para utilizar a câmera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    
+    if (!result.canceled && result.assets.length > 0) {
+      const selectedImage = result.assets[0];
+      setImage(selectedImage.uri || '');
+    }
   };
 
   return (
@@ -45,11 +79,16 @@ export default function BarberRegistrationCard({
             alignItems: "center",
           }}
         >
-          <Avatar
-            size={80}
-            rounded
-            containerStyle={{ backgroundColor: "#D9D9D9" }}
-          />
+          <Button
+            onPress={() => setShowModal(true)}
+            style={{ marginRight: 10 }}
+          >
+            <Avatar
+              size={80}
+              rounded
+              containerStyle={{ backgroundColor: "#D9D9D9" }}
+            />
+          </Button>
           <View style={{ flexDirection: "column" }}>
             <Text style={{ fontFamily: "Montserrat_700Bold", fontSize: 16 }}>
               {name}
@@ -138,6 +177,40 @@ export default function BarberRegistrationCard({
           />
         </View>
       </Dialog>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#fff",
+              padding: 20,
+              borderRadius: 10,
+              width: "80%",
+            }}
+          >
+            <Button title="Abrir Camera" onPress={takePicture} />
+            <Button title="Abrir Galeria" onPress={pickImageFromGallery} />
+            <Button title="Cancelar" onPress={() => setShowModal(false)} />
+          </View>
+        </View>
+      </Modal>
+      <Camera
+        style={{ height: 0, width: 0, position: "absolute" }}
+        ref={(ref: any) => {
+          cameraRef.current = ref;
+        }}
+      />
     </View>
   );
 }
