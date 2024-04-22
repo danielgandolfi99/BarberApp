@@ -1,10 +1,10 @@
 import { Avatar, Button, Card } from "@rneui/base";
 import { Modal, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Dialog } from "@rneui/themed";
-import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import CameraSendImageModal from "../Modals/CameraSendImageModal";
 
 export interface BarberRegistrationCardProps {
   name: string;
@@ -21,7 +21,7 @@ export default function BarberRegistrationCard({
   const [deleteRegister, setDeleteRegister] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const cameraRef = useRef<Camera | null>(null);
+  const [modalCamera, setModalCamera] = useState(false);
 
   const handleDeleteRegister = () => {
     closeDeleteRegister();
@@ -29,14 +29,6 @@ export default function BarberRegistrationCard({
 
   const closeDeleteRegister = () => {
     setDeleteRegister(false);
-  };
-
-  const takePicture = async () => {
-    setShowModal(false);
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      setImage(photo.uri);
-    }
   };
 
   const pickImageFromGallery = async () => {
@@ -53,11 +45,16 @@ export default function BarberRegistrationCard({
       aspect: [4, 3],
       quality: 1,
     });
-    
+
     if (!result.canceled && result.assets.length > 0) {
       const selectedImage = result.assets[0];
-      setImage(selectedImage.uri || '');
+      setImage(selectedImage.uri);
+      handleUpdateImage();
     }
+  };
+
+  const handleUpdateImage = () => {
+    console.log("teste");
   };
 
   return (
@@ -68,7 +65,7 @@ export default function BarberRegistrationCard({
           width: 335,
           justifyContent: "center",
           borderRadius: 3,
-          padding: 8,
+          padding: 0,
           backgroundColor: "#9D4EDD",
         }}
       >
@@ -79,14 +76,12 @@ export default function BarberRegistrationCard({
             alignItems: "center",
           }}
         >
-          <Button
-            onPress={() => setShowModal(true)}
-            style={{ marginRight: 10 }}
-          >
+          <Button onPress={() => setShowModal(true)} color="transparent">
             <Avatar
               size={80}
               rounded
               containerStyle={{ backgroundColor: "#D9D9D9" }}
+              source={{ uri: image || " " }}
             />
           </Button>
           <View style={{ flexDirection: "column" }}>
@@ -137,9 +132,9 @@ export default function BarberRegistrationCard({
             </View>
           </View>
           <Button
-            color="transparent"
             containerStyle={{ alignSelf: "flex-end" }}
-            buttonStyle={{ padding: 0 }}
+            color="transparent"
+            buttonStyle={{ padding: 0, backgroundColor: "#b27edb" }}
             onPress={() => setDeleteRegister(true)}
           >
             <Icon name="deleteuser" color="#D62828" size={35} />
@@ -147,6 +142,7 @@ export default function BarberRegistrationCard({
         </View>
       </Card>
       <Dialog
+        animationType="slide"
         isVisible={deleteRegister}
         onBackdropPress={closeDeleteRegister}
         style={{ backgroundColor: "#fff" }}
@@ -177,40 +173,46 @@ export default function BarberRegistrationCard({
           />
         </View>
       </Dialog>
-      <Modal
+      <Dialog
         animationType="slide"
         transparent={true}
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
+        isVisible={showModal}
+        onBackdropPress={() => setShowModal(false)}
       >
         <View
           style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "#fff",
+            padding: 10,
+            borderRadius: 10,
+            width: "100%",
           }}
         >
-          <View
-            style={{
-              backgroundColor: "#fff",
-              padding: 20,
-              borderRadius: 10,
-              width: "80%",
-            }}
-          >
-            <Button title="Abrir Camera" onPress={takePicture} />
-            <Button title="Abrir Galeria" onPress={pickImageFromGallery} />
-            <Button title="Cancelar" onPress={() => setShowModal(false)} />
+          <View style={{ marginBottom: 15 }}>
+            <Button
+              title="Abrir Camera"
+              color="#9D4EDD"
+              onPress={() => {
+                setModalCamera(true);
+                setShowModal(false);
+              }}
+            />
+          </View>
+          <View style={{ marginBottom: 0 }}>
+            <Button
+              title="Abrir Galeria"
+              color="#9D4EDD"
+              onPress={pickImageFromGallery}
+            />
           </View>
         </View>
+      </Dialog>
+      <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
+        <CameraSendImageModal
+          onClose={setModalCamera}
+          onUpdateImage={handleUpdateImage}
+          onSetImage={setImage}
+        />
       </Modal>
-      <Camera
-        style={{ height: 0, width: 0, position: "absolute" }}
-        ref={(ref: any) => {
-          cameraRef.current = ref;
-        }}
-      />
     </View>
   );
 }
