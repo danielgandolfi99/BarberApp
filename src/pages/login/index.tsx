@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { Button } from "@rneui/base";
+import { Button, Icon } from "@rneui/base";
 import { useEffect, useState } from "react";
-import { Alert, Image, Text, View } from "react-native";
+import { Alert, Image, Modal, Text, View } from "react-native";
 import TextInputStyled from "../../components/TextInputStyled";
 import { styles } from "../../components/stylesComponents";
 import ButtonStyled from "../../components/ButtonStyled";
@@ -36,12 +36,12 @@ const Login = () => {
             const { access_token } = response.data;
             dispatch(setToken(access_token));
             navigation.navigate({ name: "Cadastro Barbeiros" } as never);
-          } else {
-            setMessage("Usuário ou senha incorreta!");
           }
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response.status === 401) {
+            setMessage("E-mail ou senha incorreta.");
+          }
         })
         .finally(() => {
           setSearch(false);
@@ -108,11 +108,7 @@ const Login = () => {
       <View>
         <Text style={{ color: "red" }}>{message}</Text>
       </View>
-      <ButtonStyled
-        name="Entrar"
-        onPress={handleSubmit}
-        // disabled={!email || !password || password.length < 6}
-      />
+      <ButtonStyled name="Entrar" onPress={handleSubmit} />
       <View style={styles.row}>
         <Button
           title="Não possui conta? Cadastre-se"
@@ -127,6 +123,11 @@ const Login = () => {
           onPress={handleOpenCadastro}
         />
       </View>
+      {/* <Modal visible={search}>
+        <View style={{ height: 100, width: "100%" }}>
+          <Icon name="" />
+        </View>
+      </Modal> */}
     </View>
   );
 };

@@ -1,12 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/base";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Alert, TouchableOpacity, Text } from "react-native";
 import ButtonStyled from "../../components/ButtonStyled";
 import { styles } from "../../components/stylesComponents";
 import TextSubtitleStyled from "../../components/TextSubtitleStyled";
 import TextTitleStyled from "../../components/TextTitleStyled";
 import TextInputStyled from "../../components/TextInputStyled";
+import api from "../../services/api";
+import { RegisterUserProps } from "../../types/user";
 
 const Cadastro = () => {
   const navigation = useNavigation();
@@ -16,6 +18,36 @@ const Cadastro = () => {
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [search, setSearch] = useState(false);
+
+  useEffect(() => {
+    if (search) {
+      const newRegister: RegisterUserProps = {
+        name: nome,
+        surname: sobrenome,
+        phone: celular,
+        email: email,
+        password: password,
+      };
+      api
+        .post("/users", newRegister)
+        .then((response) => {
+          if (response && response.data) {
+            Alert.alert(
+              "Cadastro concluido com sucesso!",
+              "Efetue o login para acessar sua conta."
+            );
+            navigation.navigate({ name: "Login" } as never);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    }
+  }, [search]);
 
   function isValidEmail() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,46 +64,35 @@ const Cadastro = () => {
     setCelular(numericValue);
   };
 
-  function checkValidSubmit(): boolean {
+  function checkValidSubmit() {
     if (!nome || !sobrenome || !celular || !email || !password) {
       Alert.alert("Formulário incompleto", "Preencha todos os campos!");
-      return false;
+      return;
     } else if (!isValidCelular()) {
       Alert.alert(
         "Número de celular inválido",
         "Por favor, insira um número de celular válido."
       );
-      return false;
+      return;
     } else if (!isValidEmail()) {
       Alert.alert(
         "Email Incorreto",
         "Por favor, insira um endereço de e-mail válido."
       );
-      return false;
+      return;
     } else if (password && password.length < 6) {
       Alert.alert(
         "Senha Fraca",
         "A senha precisa conter pelo menos 6 caracteres."
       );
-      return false;
+      return;
     } else {
-      Alert.alert(
-        "Cadastro concluido com sucesso!",
-        "Efetue o login para acessar sua conta."
-      );
+      setSearch(true);
     }
-    return true;
   }
 
   const goBack = () => {
-      navigation.goBack();
-  };
-
-  const handleSubmit = () => {
-    const check = checkValidSubmit();
-    if (check) {
-      goBack();
-    }
+    navigation.goBack();
   };
 
   return (
@@ -116,15 +137,17 @@ const Cadastro = () => {
         autoCapitalizeNone
       />
       <View style={styles.row2}>
-        <ButtonStyled name="Confirmar" onPress={handleSubmit} />
+        <ButtonStyled name="Confirmar" onPress={checkValidSubmit} />
       </View>
       <TouchableOpacity onPress={goBack}>
-        <Text style={
-          {fontFamily: "Montserrat_700Bold", 
-          fontSize: 20, 
-          color: "#fff", 
-          marginTop: 10}
-        }>
+        <Text
+          style={{
+            fontFamily: "Montserrat_700Bold",
+            fontSize: 20,
+            color: "#fff",
+            marginTop: 10,
+          }}
+        >
           Cancelar
         </Text>
       </TouchableOpacity>
