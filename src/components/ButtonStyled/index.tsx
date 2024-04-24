@@ -5,9 +5,10 @@ import { Button } from "@rneui/base";
 interface ButtonProps {
   name: string;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export default function ButtonStyled({ name, onPress }: ButtonProps) {
+export default function ButtonStyled({ name, onPress, disabled }: ButtonProps) {
   return (
     <View style={styles.row}>
       <Button
@@ -19,6 +20,7 @@ export default function ButtonStyled({ name, onPress }: ButtonProps) {
         }}
         buttonStyle={styles.button}
         onPress={onPress}
+        disabled={disabled}
       />
     </View>
   );

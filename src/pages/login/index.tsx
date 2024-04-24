@@ -1,14 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/base";
-import { useState } from "react";
-import { Alert, Image, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Image, Text, View } from "react-native";
 import TextInputStyled from "../../components/TextInputStyled";
 import { styles } from "../../components/stylesComponents";
 import ButtonStyled from "../../components/ButtonStyled";
 import TextTitleStyled from "../../components/TextTitleStyled";
 import api from "../../services/api";
-import { useDispatch } from "react-redux";
 import { setToken } from "../../services/redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -16,48 +16,64 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [search, setSearch] = useState(false);
 
   function isValidEmail() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  const test = () => {
-    api
-      .post("/auth", {
-        email: email,
-        password: password,
-      })
-      .then((response) => {
-        const { access_token } = response.data;
-        dispatch(setToken(access_token));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  useEffect(() => {
+    if (search) {
+      api
+        .post("/auth", {
+          username: email,
+          password: password,
+        })
+        .then((response) => {
+          if (response && response.data) {
+            const { access_token } = response.data;
+            dispatch(setToken(access_token));
+            navigation.navigate({ name: "Cadastro Barbeiros" } as never);
+          } else {
+            setMessage("Usuário ou senha incorreta!");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    }
+  }, [search]);
 
   const handleSubmit = () => {
     if (!email || !password) {
-      Alert.alert(
-        "Formulário incompleto!",
-        "Preencha todos os campos para entrar."
-      );
-    } else if (!isValidEmail()) {
-      Alert.alert(
-        "Email Incorreto",
-        "Por favor, insira um endereço de e-mail válido."
-      );
-      return;
-    } else if (password && password.length < 6) {
-      Alert.alert(
-        "Senha Fraca",
-        "A senha precisa conter pelo menos 6 caracteres."
-      );
+      // Alert.alert(
+      //   "Formulário incompleto!",
+      //   "Preencha todos os campos para entrar."
+      // );
+      setMessage("Preencha todos os campos para entrar.");
+      // } else if (!isValidEmail()) {
+      // Alert.alert(
+      //   "Email Incorreto",
+      //   "Por favor, insira um endereço de e-mail válido."
+      // );
+      // setMessage("Por favor, insira um endereço de e-mail válido.");
+      // return;
+      // } else if (password && password.length < 6) {
+      // Alert.alert(
+      //   "Senha Fraca",
+      //   "A senha precisa conter pelo menos 6 caracteres."
+      // );
+      // setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
     } else {
       console.log("Email: " + email);
       console.log("Senha: " + password);
-      navigation.navigate({ name: "Cadastro Barbeiros" } as never);
+      setMessage("");
+      setSearch(true);
     }
   };
 
@@ -89,7 +105,14 @@ const Login = () => {
         secureTextEntry
         autoCapitalizeNone
       />
-      <ButtonStyled name="Entrar" onPress={handleSubmit} />
+      <View>
+        <Text style={{ color: "red" }}>{message}</Text>
+      </View>
+      <ButtonStyled
+        name="Entrar"
+        onPress={handleSubmit}
+        // disabled={!email || !password || password.length < 6}
+      />
       <View style={styles.row}>
         <Button
           title="Não possui conta? Cadastre-se"

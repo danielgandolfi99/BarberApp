@@ -16,6 +16,8 @@ import {
   Ubuntu_700Bold,
 } from "@expo-google-fonts/ubuntu";
 import CadastroBarbeiros from "./src/pages/gerencial/cadastro-babeiros";
+import { Provider } from "react-redux";
+import store from "./src/services/redux/store";
 
 const Stack = createStackNavigator();
 
@@ -47,19 +49,21 @@ export default function App() {
       colors={["rgba(123,44,191,1)", "rgba(34,29,37,1)"]}
       style={{ flex: 1 }}
     >
-      <NavigationContainer theme={MyTheme}>
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Cadastro" component={Cadastro} />
-          <Stack.Screen
-            name="Cadastro Barbeiros"
-            component={CadastroBarbeiros}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer theme={MyTheme}>
+          <Stack.Navigator
+            initialRouteName="Login"
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Cadastro" component={Cadastro} />
+            <Stack.Screen
+              name="Cadastro Barbeiros"
+              component={CadastroBarbeiros}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </LinearGradient>
   );
 }

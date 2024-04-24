@@ -11,6 +11,8 @@ import BarberRegistrationCard, {
 } from "../../../components/BarberRegistrationCard";
 import BarberRegistrationModal from "../../../components/Modals/BarberRegistrationModal";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../services/redux/store";
 
 const testExample: BarberRegistrationCardProps[] = [
   { name: "Daniel", scheduled: 20, performed: 15 },
@@ -23,12 +25,15 @@ const testExample: BarberRegistrationCardProps[] = [
 
 const CadastroBarbeiros = () => {
   const navigation = useNavigation();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const handleReturn = () => {
     navigation.goBack();
   };
 
-  const [visibleModal, setVisibleModal] = useState(false)
+  const [visibleModal, setVisibleModal] = useState(false);
+
+  console.log(token);
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1, alignItems: "center" }}>
@@ -55,7 +60,7 @@ const CadastroBarbeiros = () => {
         visible={visibleModal}
         onRequestClose={() => setVisibleModal(false)}
       >
-        <BarberRegistrationModal handleClose={ () => setVisibleModal(false) }/>
+        <BarberRegistrationModal handleClose={() => setVisibleModal(false)} />
       </Modal>
     </View>
   );
