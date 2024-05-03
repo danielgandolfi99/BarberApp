@@ -7,12 +7,13 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import { Avatar } from "@rneui/base";
+import { Avatar, Button } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
 import TextInputStyled from "../TextInputStyled";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import ButtonStyled from "../ButtonStyled";
+import Icon from "react-native-vector-icons/AntDesign";
 
 interface BarberRegistrationModalProps {
   handleClose: () => void;
@@ -74,7 +75,7 @@ export default function BarberRegistrationModal({
   const handleSubmit = () => {
     const check = checkValidSubmit();
     if (check) {
-        handleClose();
+      handleClose();
     }
   };
 
@@ -84,11 +85,25 @@ export default function BarberRegistrationModal({
         colors={["rgba(123,44,191,1)", "rgba(34,29,37,1)"]}
         style={styles.modal}
       >
-        <View style={{ flexDirection: "row" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: 'center',
+            justifyContent: "space-between",
+            padding: 5,
+          }}
+        >
           <Text style={styles.title}>Cadastrar barbeiros</Text>
-          <TouchableOpacity onPress={handleClose}>
-            <Text style={styles.close}>X</Text>
-          </TouchableOpacity>
+          <Button
+            onPress={handleClose}
+            color="transparent"
+            containerStyle={{
+              alignSelf: "flex-end",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Icon name="close" color="#fff" size={36} />
+          </Button>
         </View>
         <ScrollView style={styles.scrollView}>
           <View style={styles.modalContent}>
@@ -147,7 +162,7 @@ const styles = StyleSheet.create({
   modal: {
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    height: '75%',
+    height: "75%",
   },
   scrollView: {
     flex: 1,
@@ -158,8 +173,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    marginTop: "5%",
-    paddingLeft: "7%",
+    marginLeft: 25,
     fontFamily: "Montserrat_700Bold",
     fontSize: 18,
     color: "#fff",
@@ -169,12 +183,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#fff",
     marginTop: 10,
-  },
-  close: {
-    marginTop: "8%",
-    paddingLeft: "32%",
-    fontFamily: "Montserrat_700Bold",
-    fontSize: 30,
-    color: "#fff",
   },
 });
