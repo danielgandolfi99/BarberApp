@@ -18,6 +18,7 @@ import {
 import CadastroBarbeiros from "./src/pages/gerencial/cadastro-babeiros";
 import { Provider } from "react-redux";
 import store from "./src/services/redux/store";
+import HomeBarbeiros from "./src/pages/gerencial/home-barbeiros";
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,7 @@ export default function App() {
               name="Cadastro Barbeiros"
               component={CadastroBarbeiros}
             />
+            <Stack.Screen name="Home Barbeiros" component={HomeBarbeiros} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
