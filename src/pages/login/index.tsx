@@ -1,7 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button, Icon } from "@rneui/base";
 import { useEffect, useState } from "react";
-import { Alert, Image, Modal, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Modal,
+  Text,
+  View,
+} from "react-native";
 import TextInputStyled from "../../components/TextInputStyled";
 import { styles } from "../../components/stylesComponents";
 import ButtonStyled from "../../components/ButtonStyled";
@@ -9,6 +16,7 @@ import TextTitleStyled from "../../components/TextTitleStyled";
 import api from "../../services/api";
 import { setToken } from "../../services/redux/authSlice";
 import { useDispatch } from "react-redux";
+import { StyleSheet } from "react-native";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -48,6 +56,11 @@ const Login = () => {
         });
     }
   }, [search]);
+
+  // useEffect(() => {
+  //   if (search) {
+  //   }
+  // }, [search]);
 
   const handleSubmit = () => {
     if (!email || !password) {
@@ -123,13 +136,39 @@ const Login = () => {
           onPress={handleOpenCadastro}
         />
       </View>
-      {/* <Modal visible={search}>
-        <View style={{ height: 100, width: "100%" }}>
-          <Icon name="" />
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={search}
+        onRequestClose={() => {}}
+      >
+        <View style={stylesModal.modalBackground}>
+          <View style={stylesModal.activityIndicatorWrapper}>
+            <ActivityIndicator animating={search} />
+          </View>
         </View>
-      </Modal> */}
+      </Modal>
     </View>
   );
 };
+
+const stylesModal = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#00000040",
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "#FFFFFF",
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+});
 
 export default Login;

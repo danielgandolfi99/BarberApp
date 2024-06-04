@@ -1,5 +1,5 @@
 import { Button } from "@rneui/themed";
-import { Camera } from "expo-camera";
+import { Camera } from "expo-camera/legacy";
 import { CameraType } from "expo-image-picker";
 import { useRef, useState } from "react";
 import { Image, View } from "react-native";
