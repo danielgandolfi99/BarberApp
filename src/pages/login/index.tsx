@@ -144,7 +144,7 @@ const Login = () => {
       >
         <View style={stylesModal.modalBackground}>
           <View style={stylesModal.activityIndicatorWrapper}>
-            <ActivityIndicator animating={search} />
+            <ActivityIndicator animating={search} size={50}/>
           </View>
         </View>
       </Modal>
@@ -152,7 +152,7 @@ const Login = () => {
   );
 };
 
-const stylesModal = StyleSheet.create({
+export const stylesModal = StyleSheet.create({
   modalBackground: {
     flex: 1,
     alignItems: "center",
@@ -162,8 +162,8 @@ const stylesModal = StyleSheet.create({
   },
   activityIndicatorWrapper: {
     backgroundColor: "#FFFFFF",
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
     borderRadius: 10,
     display: "flex",
     alignItems: "center",

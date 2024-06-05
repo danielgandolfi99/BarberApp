@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/base";
 import { useEffect, useState } from "react";
-import { View, Alert, TouchableOpacity, Text } from "react-native";
+import { View, Alert, TouchableOpacity, Text, Modal, ActivityIndicator } from "react-native";
 import ButtonStyled from "../../components/ButtonStyled";
 import { styles } from "../../components/stylesComponents";
 import TextSubtitleStyled from "../../components/TextSubtitleStyled";
@@ -9,6 +9,7 @@ import TextTitleStyled from "../../components/TextTitleStyled";
 import TextInputStyled from "../../components/TextInputStyled";
 import api from "../../services/api";
 import { RegisterUserProps } from "../../types/user";
+import { stylesModal } from "../login";
 
 const Cadastro = () => {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ const Cadastro = () => {
       api
         .post("/users", newRegister)
         .then((response) => {
-          if (response && response.data) {
+          if (response) {
             Alert.alert(
               "Cadastro concluido com sucesso!",
               "Efetue o login para acessar sua conta."
@@ -41,6 +42,10 @@ const Cadastro = () => {
           }
         })
         .catch((error) => {
+          Alert.alert(
+            `Erro ${error.response.status}`,
+            "Erro ao realizar cadastro."
+          );
           console.log(error);
         })
         .finally(() => {
@@ -151,6 +156,18 @@ const Cadastro = () => {
           Cancelar
         </Text>
       </TouchableOpacity>
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={search}
+        onRequestClose={() => {}}
+      >
+        <View style={stylesModal.modalBackground}>
+          <View style={stylesModal.activityIndicatorWrapper}>
+            <ActivityIndicator animating={search} size={50} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

@@ -10,11 +10,12 @@ import BarberRegistrationCard, {
   BarberRegistrationCardProps,
 } from "../../../components/BarberRegistrationCard";
 import BarberRegistrationModal from "../../../components/Modals/BarberRegistrationModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../services/redux/store";
+import api from "../../../services/api";
 
-const testExample: BarberRegistrationCardProps[] = [
+const test: BarberRegistrationCardProps[] = [
   { name: "Daniel", scheduled: 20, performed: 15 },
   { name: "Lucas", scheduled: 15, performed: 1 },
   { name: "Marcos", scheduled: 18, performed: 15 },
@@ -26,10 +27,35 @@ const testExample: BarberRegistrationCardProps[] = [
 const CadastroBarbeiros = () => {
   const navigation = useNavigation();
   const token = useSelector((state: RootState) => state.auth.token);
+  const [search, setSearch] = useState(true);
+  const [data, setData] = useState<BarberRegistrationCardProps[]>([]);
 
   const handleReturn = () => {
     navigation.goBack();
   };
+
+  useEffect(() => {
+    if (search) {
+      api
+        .get("/barbeiros", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          if (response) {
+            console.log(response.data);
+            setData(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    }
+  }, [search]);
 
   const [visibleModal, setVisibleModal] = useState(false);
 
@@ -43,8 +69,8 @@ const CadastroBarbeiros = () => {
         onNavegatePage={handleReturn}
       />
       <ScrollView style={{ height: "80%" }}>
-        {testExample &&
-          testExample.map((value, index) => (
+        {data &&
+          data.map((value, index) => (
             <BarberRegistrationCard
               key={index}
               name={value.name}
