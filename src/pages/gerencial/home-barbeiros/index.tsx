@@ -21,9 +21,9 @@ const HomeBarbeiros = () => {
         onNavegatePage={handleReturn}
       />
       <View style={{marginTop: 15}}>
-        <HomeBarberButton name={"Minha\nAgenda"} icon="calendar-alt" navigatePage="Cadastro Barbeiros"/>
-        <HomeBarberButton name={"Meus\nServiços"} icon="cut" navigatePage="Cadastro Barbeiros"/>
-        <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Cadastro Barbeiros"/>
+        <HomeBarberButton name={"Minha\nAgenda"} icon="calendar-alt" navigatePage="Home Barbeiros"/>
+        <HomeBarberButton name={"Meus\nServiços"} icon="cut" navigatePage="Home Barbeiros"/>
+        <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Home Barbeiros"/>
         <HomeBarberButton name={"Barbeiros"}icon="user-alt" navigatePage="Cadastro Barbeiros"/>
       </View>
     </View>

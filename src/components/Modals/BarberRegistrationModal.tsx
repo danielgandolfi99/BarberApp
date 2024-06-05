@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   ScrollView,
@@ -6,14 +6,21 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
-import { Avatar, Button } from "@rneui/base";
+import { Avatar, Button, Dialog } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
 import TextInputStyled from "../TextInputStyled";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import ButtonStyled from "../ButtonStyled";
 import Icon from "react-native-vector-icons/AntDesign";
+import CameraSendImageModal from "./CameraSendImageModal";
+import * as ImagePicker from "expo-image-picker";
+import { RegisterBarberProps } from "../../types/barber";
+import api from "../../services/api";
+import { stylesModal } from "../../pages/login";
 
 interface BarberRegistrationModalProps {
   handleClose: () => void;
@@ -28,6 +35,10 @@ export default function BarberRegistrationModal({
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalCamera, setModalCamera] = useState(false);
+  const [search, setSearch] = useState(false);
 
   function isValidEmail() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,8 +77,6 @@ export default function BarberRegistrationModal({
         "A senha precisa conter pelo menos 6 caracteres."
       );
       return false;
-    } else {
-      Alert.alert("Cadastro de barbeiro concluído com sucesso!");
     }
     return true;
   }
@@ -75,8 +84,66 @@ export default function BarberRegistrationModal({
   const handleSubmit = () => {
     const check = checkValidSubmit();
     if (check) {
-      handleClose();
+      setSearch(true);
     }
+  };
+
+  useEffect(() => {
+    if (search) {
+      const newRegister: RegisterBarberProps = {
+        nome: nome,
+        celular: celular,
+        email: email,
+        senha: password,
+        imagem: image || "",
+      };
+      api
+        .post("/barbeiros", newRegister)
+        .then((response) => {
+          if (response) {
+            Alert.alert(
+              "Barbeiro cadastrado com sucesso!",
+            );
+            navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+          }
+        })
+        .catch((error) => {
+          Alert.alert(
+            `Erro ${error.response.status}`,
+            "Erro ao realizar cadastro."
+          );
+          console.log(error);
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    }
+  }, [search]);
+
+  const pickImageFromGallery = async () => {
+    setShowModal(false);
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("O aplicativo não possui permissão para utilizar a câmera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      const selectedImage = result.assets[0];
+      setImage(selectedImage.uri);
+      handleUpdateImage();
+    }
+  };
+
+  const handleUpdateImage = () => {
+    console.log("teste");
   };
 
   return (
@@ -88,7 +155,7 @@ export default function BarberRegistrationModal({
         <View
           style={{
             flexDirection: "row",
-            alignItems: 'center',
+            alignItems: "center",
             justifyContent: "space-between",
             padding: 5,
           }}
@@ -107,11 +174,14 @@ export default function BarberRegistrationModal({
         </View>
         <ScrollView style={styles.scrollView}>
           <View style={styles.modalContent}>
-            <Avatar
-              size={80}
-              rounded
-              containerStyle={{ backgroundColor: "#D9D9D9" }}
-            />
+            <Button onPress={() => setShowModal(true)} color="transparent">
+              <Avatar
+                size={80}
+                rounded
+                containerStyle={{ backgroundColor: "#D9D9D9" }}
+                source={{ uri: image || " " }}
+              />
+            </Button>
             <TextInputStyled
               textName="Nome"
               value={nome}
@@ -149,6 +219,58 @@ export default function BarberRegistrationModal({
           </View>
         </ScrollView>
       </LinearGradient>
+      <Dialog
+        animationType="slide"
+        transparent={true}
+        isVisible={showModal}
+        onBackdropPress={() => setShowModal(false)}
+      >
+        <View
+          style={{
+            backgroundColor: "#fff",
+            padding: 10,
+            borderRadius: 10,
+            width: "100%",
+          }}
+        >
+          <View style={{ marginBottom: 15 }}>
+            <Button
+              title="Abrir Camera"
+              color="#9D4EDD"
+              onPress={() => {
+                setModalCamera(true);
+                setShowModal(false);
+              }}
+            />
+          </View>
+          <View style={{ marginBottom: 0 }}>
+            <Button
+              title="Abrir Galeria"
+              color="#9D4EDD"
+              onPress={pickImageFromGallery}
+            />
+          </View>
+        </View>
+      </Dialog>
+      <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
+        <CameraSendImageModal
+          onClose={setModalCamera}
+          onUpdateImage={handleUpdateImage}
+          onSetImage={setImage}
+        />
+      </Modal>
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={search}
+        onRequestClose={() => {}}
+      >
+        <View style={stylesModal.modalBackground}>
+          <View style={stylesModal.activityIndicatorWrapper}>
+            <ActivityIndicator animating={search} size={50} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

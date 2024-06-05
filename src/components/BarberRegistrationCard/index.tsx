@@ -1,30 +1,48 @@
 import { Avatar, Button, Card } from "@rneui/base";
-import { Modal, Text, View } from "react-native";
+import { Alert, Modal, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "@rneui/themed";
 import * as ImagePicker from "expo-image-picker";
 import CameraSendImageModal from "../Modals/CameraSendImageModal";
-
-export interface BarberRegistrationCardProps {
-  name: string;
-  scheduled: number;
-  performed: number;
-  //   image: string;
-}
+import api from "../../services/api";
+import { RegisterBarberProps } from "../../types/barber";
+import { useSelector } from "react-redux";
+import { RootState } from "../../services/redux/store";
+import { useNavigation } from "@react-navigation/native";
 
 export default function BarberRegistrationCard({
-  name,
-  scheduled,
-  performed,
-}: BarberRegistrationCardProps) {
+  barber,
+}: {
+  barber: RegisterBarberProps;
+}) {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const navigation = useNavigation();
+
   const [deleteRegister, setDeleteRegister] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
 
   const handleDeleteRegister = () => {
-    closeDeleteRegister();
+    api
+      .delete(`/barbeiros/${barber.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          Alert.alert("Barbeiro deletado com sucesso!");
+          navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        closeDeleteRegister();
+      });
   };
 
   const closeDeleteRegister = () => {
@@ -54,7 +72,28 @@ export default function BarberRegistrationCard({
   };
 
   const handleUpdateImage = () => {
-    console.log("teste");
+    const updateRegister: RegisterBarberProps = {
+      nome: barber.nome,
+      celular: barber.celular,
+      email: barber.email,
+      senha: barber.senha,
+      imagem: image || "",
+    };
+    api
+      .patch(`/barbeiros/${barber.id}`, updateRegister, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          Alert.alert("Barbeiro alterado com sucesso!");
+          navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -86,7 +125,7 @@ export default function BarberRegistrationCard({
           </Button>
           <View style={{ flexDirection: "column" }}>
             <Text style={{ fontFamily: "Montserrat_700Bold", fontSize: 16 }}>
-              {name}
+              {barber.nome}
             </Text>
             <View style={{ flexDirection: "row", marginTop: 10 }}>
               <View style={{ flexDirection: "column", marginEnd: 15 }}>
@@ -106,7 +145,7 @@ export default function BarberRegistrationCard({
                     fontSize: 16,
                   }}
                 >
-                  {scheduled}
+                  0
                 </Text>
               </View>
               <View style={{ flexDirection: "column" }}>
@@ -126,7 +165,7 @@ export default function BarberRegistrationCard({
                     fontSize: 16,
                   }}
                 >
-                  {performed}
+                  0
                 </Text>
               </View>
             </View>
@@ -148,7 +187,7 @@ export default function BarberRegistrationCard({
         style={{ backgroundColor: "#fff" }}
       >
         <Dialog.Title title="Excluir Barbeiro" />
-        <Text>Voce deseja excluir o barbeiro {name}?</Text>
+        <Text>Voce deseja excluir o barbeiro {barber.nome}?</Text>
         <View
           style={{
             flexDirection: "row",

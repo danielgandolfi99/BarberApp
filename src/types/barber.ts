@@ -3,5 +3,6 @@ export type RegisterBarberProps = {
   email: string;
   celular: string;
   senha: string;
-//   imagem: Express.Multer.File;
+  imagem: string;
+  id?: number;
 };
