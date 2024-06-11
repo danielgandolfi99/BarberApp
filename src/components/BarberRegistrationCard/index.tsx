@@ -26,7 +26,7 @@ export default function BarberRegistrationCard({
 
   const handleDeleteRegister = () => {
     api
-      .delete(`/barbeiros/${barber.id}`, {
+      .delete(`/barbeiros/${barber.barbeiro_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,16 +72,13 @@ export default function BarberRegistrationCard({
   };
 
   const handleUpdateImage = () => {
-    const updateRegister: RegisterBarberProps = {
-      nome: barber.nome,
-      celular: barber.celular,
-      email: barber.email,
-      senha: barber.senha,
+    const updateRegister = {
       imagem: image || "",
     };
     api
-      .patch(`/barbeiros/${barber.id}`, updateRegister, {
+      .patch(`/barbeiros/${barber.barbeiro_id}`, updateRegister, {
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       })
@@ -95,6 +92,14 @@ export default function BarberRegistrationCard({
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    const imageBase64 = barber.imagem.data.reduce((data, byte) => {
+      return data + String.fromCharCode(byte);
+    }, "");
+
+    setImage(imageBase64);
+  });
 
   return (
     <View style={{ flexDirection: "column", alignItems: "flex-start" }}>

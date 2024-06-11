@@ -3,6 +3,9 @@ export type RegisterBarberProps = {
   email: string;
   celular: string;
   senha: string;
-  imagem: string;
-  id?: number;
+  imagem: {
+    type: string;
+    data: number[];
+  };
+  barbeiro_id: number;
 };

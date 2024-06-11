@@ -19,6 +19,8 @@ import CadastroBarbeiros from "./src/pages/gerencial/cadastro-babeiros";
 import { Provider } from "react-redux";
 import store from "./src/services/redux/store";
 import HomeBarbeiros from "./src/pages/gerencial/home-barbeiros";
+import RecuperarSenha from "./src/pages/recuperar-senha";
+
 
 const Stack = createStackNavigator();
 
@@ -63,6 +65,7 @@ export default function App() {
               component={CadastroBarbeiros}
             />
             <Stack.Screen name="Home Barbeiros" component={HomeBarbeiros} />
+            <Stack.Screen name="Recuperar Senha" component={RecuperarSenha} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

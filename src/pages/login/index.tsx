@@ -93,6 +93,10 @@ const Login = () => {
   const handleOpenCadastro = () => {
     navigation.navigate({ name: "Cadastro" } as never);
   };
+  
+  const handleOpenRecuperarSenha = () => {
+    navigation.navigate({ name: "Recuperar Senha" } as never);
+  };
 
   return (
     <View style={styles.container}>
@@ -122,6 +126,20 @@ const Login = () => {
         <Text style={{ color: "red" }}>{message}</Text>
       </View>
       <ButtonStyled name="Entrar" onPress={handleSubmit} />
+      <View style={styles.row}>
+        <Button
+          title="Esqueceu sua senha?"
+          color="transparent"
+          titleStyle={{
+            fontFamily: "Montserrat_700Bold",
+            fontSize: 12,
+            textDecorationLine: "underline",
+            color: "#fff",
+          }}
+          style={styles.button}
+          onPress={handleOpenRecuperarSenha}
+        />
+      </View>
       <View style={styles.row}>
         <Button
           title="Não possui conta? Cadastre-se"
