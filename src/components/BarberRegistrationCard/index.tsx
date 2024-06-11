@@ -92,14 +92,17 @@ export default function BarberRegistrationCard({
         console.log(error);
       });
   };
-
   useEffect(() => {
-    const imageBase64 = barber.imagem.data.reduce((data, byte) => {
-      return data + String.fromCharCode(byte);
-    }, "");
+    if (barber.imagem) {
+      const imageBase64 = barber.imagem.data.reduce((data, byte) => {
+        return data + String.fromCharCode(byte);
+      }, "");
 
-    setImage(imageBase64);
-  });
+      setImage(`data:image/png;base64,${btoa(imageBase64)}`);
+    }
+  }, [barber]);
+
+  console.log(image);
 
   return (
     <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
