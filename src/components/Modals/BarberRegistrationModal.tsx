@@ -21,21 +21,25 @@ import * as ImagePicker from "expo-image-picker";
 import { RegisterBarberProps } from "../../types/barber";
 import api from "../../services/api";
 import { stylesModal } from "../../pages/login";
+import { useSelector } from "react-redux";
+import { RootState } from "../../services/redux/store";
 
 interface BarberRegistrationModalProps {
   handleClose: () => void;
+  onSearch: (search: boolean) => void;
 }
 
 export default function BarberRegistrationModal({
-  handleClose,
+  handleClose, onSearch
 }: BarberRegistrationModalProps) {
   const navigation = useNavigation();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const [nome, setNome] = useState("");
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const [search, setSearch] = useState(false);
@@ -89,22 +93,24 @@ export default function BarberRegistrationModal({
   };
 
   useEffect(() => {
-    if (search) {
+    if (search && image) {
       const newRegister: RegisterBarberProps = {
         nome: nome,
         celular: celular,
         email: email,
         senha: password,
-        imagem: image || "",
+        imagem: image && image,
       };
       api
-        .post("/barbeiros", newRegister)
+        .post("/barbeiros", newRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           if (response) {
-            Alert.alert(
-              "Barbeiro cadastrado com sucesso!",
-            );
-            navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+            Alert.alert("Barbeiro cadastrado com sucesso!");
+            
           }
         })
         .catch((error) => {
@@ -116,6 +122,8 @@ export default function BarberRegistrationModal({
         })
         .finally(() => {
           setSearch(false);
+          handleClose();
+          onSearch(true)
         });
     }
   }, [search]);
@@ -135,11 +143,22 @@ export default function BarberRegistrationModal({
       quality: 1,
     });
 
-    if (!result.canceled && result.assets.length > 0) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       const selectedImage = result.assets[0];
-      setImage(selectedImage.uri);
+      const file = new File(
+        [selectedImage.uri],
+        selectedImage.uri.split("/").pop() ?? "image.jpg",
+        { type: "image/jpeg" }
+      );
+      setImage(file);
       handleUpdateImage();
     }
+
+    // if (!result.canceled && result.assets.length > 0) {
+    //   const selectedImage = result.assets[0];
+    //   setImage(selectedImage);
+    //   handleUpdateImage();
+    // }
   };
 
   const handleUpdateImage = () => {
@@ -179,7 +198,7 @@ export default function BarberRegistrationModal({
                 size={80}
                 rounded
                 containerStyle={{ backgroundColor: "#D9D9D9" }}
-                source={{ uri: image || " " }}
+                source={{ uri: image?.name || " " }}
               />
             </Button>
             <TextInputStyled

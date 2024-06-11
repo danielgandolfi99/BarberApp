@@ -3,6 +3,6 @@ export type RegisterBarberProps = {
   email: string;
   celular: string;
   senha: string;
-  imagem: string;
-  id?: number;
+  imagem: File;
+  barbeiro_id?: number;
 };

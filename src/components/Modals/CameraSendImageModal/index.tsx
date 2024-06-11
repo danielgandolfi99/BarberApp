@@ -6,11 +6,12 @@ import { Image, View } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Fontisto from "react-native-vector-icons/Fontisto";
+import * as FileSystem from 'expo-file-system';
 
 interface ModalProps {
   onClose: (modalCamera: boolean) => void;
   onUpdateImage: () => void;
-  onSetImage: (image: string) => void;
+  onSetImage: (image: File) => void;
 }
 
 export default function CameraSendImageModal({
@@ -20,7 +21,7 @@ export default function CameraSendImageModal({
 }: ModalProps) {
   const cameraRef = useRef<Camera | null>(null);
   const [type, setType] = useState(CameraType.front);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>();
 
   const handleUpdateTypeCamera = () => {
     if (type === CameraType.front) {
@@ -39,16 +40,40 @@ export default function CameraSendImageModal({
       return;
     }
 
+    // try {
+    //   // if (cameraRef.current) {
+    //   //   const { uri } = await cameraRef.current.takePictureAsync();
+    //   //   // onSetImage(uri);
+    //   //   console.log("Picture taken:", uri);
+    //   //   setSelectedImage(uri);
+    //   //   // onClose(false);
+    //   //   // onUpdateImage();
+    //   // }
+    //   if (cameraRef.current) {
+    //     const { uri } = await cameraRef.current.takePictureAsync();
+    //     const file = new File([uri], uri.split('/').pop() ?? 'image.jpg', { type: 'image/jpeg' });
+    //     setSelectedImage(file);
+    //     console.log("Picture taken:", uri);
+    //     // onClose(false);
+    //     // onUpdateImage();
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
+
     try {
       if (cameraRef.current) {
         const { uri } = await cameraRef.current.takePictureAsync();
-        // onSetImage(uri);
+        const base64Image = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+        const file = new File([base64Image], "image.jpg", { type: "image/jpeg" });
+        setSelectedImage(file);
+        // handleUpdateImage(file);
         console.log("Picture taken:", uri);
-        setSelectedImage(uri);
-        // onClose(false);
-        // onUpdateImage();
+        } else {
+          console.log("O arquivo não existe ou é um diretório");
+        }
       }
-    } catch (error) {
+     catch (error) {
       console.error("Error:", error);
     }
   };
@@ -126,7 +151,7 @@ export default function CameraSendImageModal({
               height: 300,
               width: "100%",
             }}
-            source={{ uri: selectedImage || " " }}
+            source={{ uri: selectedImage.name || " " }}
           />
           <Button
             color="success"

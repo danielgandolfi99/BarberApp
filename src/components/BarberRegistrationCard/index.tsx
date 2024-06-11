@@ -10,23 +10,26 @@ import { RegisterBarberProps } from "../../types/barber";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
 import { useNavigation } from "@react-navigation/native";
+import * as FileSystem from "expo-file-system";
 
 export default function BarberRegistrationCard({
   barber,
+  onSearch,
 }: {
   barber: RegisterBarberProps;
+  onSearch: (search: boolean) => void;
 }) {
   const token = useSelector((state: RootState) => state.auth.token);
   const navigation = useNavigation();
 
   const [deleteRegister, setDeleteRegister] = useState(false);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File>();
   const [showModal, setShowModal] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
 
   const handleDeleteRegister = () => {
     api
-      .delete(`/barbeiros/${barber.id}`, {
+      .delete(`/barbeiros/${barber.barbeiro_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -34,7 +37,7 @@ export default function BarberRegistrationCard({
       .then((response) => {
         if (response) {
           Alert.alert("Barbeiro deletado com sucesso!");
-          navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+          navigation.navigate({ name: "Cadastro Barbeiros" } as never);
         }
       })
       .catch((error) => {
@@ -42,6 +45,7 @@ export default function BarberRegistrationCard({
       })
       .finally(() => {
         closeDeleteRegister();
+        onSearch(true);
       });
   };
 
@@ -64,36 +68,48 @@ export default function BarberRegistrationCard({
       quality: 1,
     });
 
-    if (!result.canceled && result.assets.length > 0) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       const selectedImage = result.assets[0];
-      setImage(selectedImage.uri);
+      const file = new File(
+        [selectedImage.uri],
+        selectedImage.uri.split("/").pop() ?? "image.jpg",
+        { type: "image/jpeg" }
+      );
+      setImage(file);
       handleUpdateImage();
     }
   };
 
-  const handleUpdateImage = () => {
-    const updateRegister: RegisterBarberProps = {
-      nome: barber.nome,
-      celular: barber.celular,
-      email: barber.email,
-      senha: barber.senha,
-      imagem: image || "",
-    };
-    api
-      .patch(`/barbeiros/${barber.id}`, updateRegister, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        if (response) {
-          Alert.alert("Barbeiro alterado com sucesso!");
-          navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const handleUpdateImage = async () => {
+    if (image) {
+      console.log('-------------------------------')
+      console.log("TESTE: " + image);
+      console.log('-------------------------------')
+      const updateRegister = {
+        imagem: image,
+      };
+      api
+        .patch(`/barbeiros/${barber.barbeiro_id}`, updateRegister, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+            // httpMethod: 'POST',
+            //     fieldName: 'file',
+            //     uploadType: FileSystem.FileSystemUploadType.MULTIPART
+          },
+        })
+        .then((response) => {
+          if (response) {
+            Alert.alert("Barbeiro alterado com sucesso!");
+          }
+        })
+        .catch((error) => {
+          console.log("erro: "+ error);
+        })
+        .finally(() => {
+          onSearch(true);
+        });
+    }
   };
 
   return (
@@ -120,7 +136,7 @@ export default function BarberRegistrationCard({
               size={80}
               rounded
               containerStyle={{ backgroundColor: "#D9D9D9" }}
-              source={{ uri: image || " " }}
+              source={{ uri: barber.imagem.name || " " }}
             />
           </Button>
           <View style={{ flexDirection: "column" }}>
