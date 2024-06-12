@@ -20,6 +20,8 @@ import { Provider } from "react-redux";
 import store from "./src/services/redux/store";
 import HomeBarbeiros from "./src/pages/gerencial/home-barbeiros";
 import RecuperarSenha from "./src/pages/recuperar-senha";
+import CadastroServicos from "./src/pages/gerencial/cadastro-servicos";
+import TelaInicial from "./src/pages/inicio";
 
 
 const Stack = createStackNavigator();
@@ -66,6 +68,8 @@ export default function App() {
             />
             <Stack.Screen name="Home Barbeiros" component={HomeBarbeiros} />
             <Stack.Screen name="Recuperar Senha" component={RecuperarSenha} />
+            <Stack.Screen name="Cadastro Servicos" component={CadastroServicos} />
+            <Stack.Screen name="Tela Inicial" component={TelaInicial} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
