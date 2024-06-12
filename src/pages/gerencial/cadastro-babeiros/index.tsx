@@ -35,7 +35,6 @@ const CadastroBarbeiros = () => {
         })
         .then((response) => {
           if (response) {
-            console.log(response.data);
             setData(response.data);
           }
         })
@@ -62,7 +61,11 @@ const CadastroBarbeiros = () => {
       <ScrollView style={{ height: "80%" }}>
         {data &&
           data.map((value, index) => (
-            <BarberRegistrationCard key={index} barber={value} />
+            <BarberRegistrationCard
+              key={index}
+              barber={value}
+              onSearch={setSearch}
+            />
           ))}
       </ScrollView>
       <ButtonStyled name="Adicionar" onPress={() => setVisibleModal(true)} />
@@ -72,7 +75,10 @@ const CadastroBarbeiros = () => {
         visible={visibleModal}
         onRequestClose={() => setVisibleModal(false)}
       >
-        <BarberRegistrationModal handleClose={() => setVisibleModal(false)} />
+        <BarberRegistrationModal
+          handleClose={() => setVisibleModal(false)}
+          onSearch={setSearch}
+        />
       </Modal>
       <Modal
         transparent={true}

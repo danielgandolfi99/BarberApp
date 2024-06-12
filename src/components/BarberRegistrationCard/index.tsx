@@ -1,5 +1,5 @@
 import { Avatar, Button, Card } from "@rneui/base";
-import { Alert, Modal, Text, View } from "react-native";
+import { Alert, Image, Modal, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useEffect, useState } from "react";
 import { Dialog } from "@rneui/themed";
@@ -10,17 +10,21 @@ import { RegisterBarberProps } from "../../types/barber";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
 import { useNavigation } from "@react-navigation/native";
+import * as FileSystem from "expo-file-system";
 
 export default function BarberRegistrationCard({
   barber,
+  onSearch,
 }: {
   barber: RegisterBarberProps;
+  onSearch: (search: boolean) => void;
 }) {
   const token = useSelector((state: RootState) => state.auth.token);
   const navigation = useNavigation();
 
+  const [search, setSearch] = useState(false);
   const [deleteRegister, setDeleteRegister] = useState(false);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string>();
   const [showModal, setShowModal] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
 
@@ -34,7 +38,6 @@ export default function BarberRegistrationCard({
       .then((response) => {
         if (response) {
           Alert.alert("Barbeiro deletado com sucesso!");
-          navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
         }
       })
       .catch((error) => {
@@ -42,6 +45,7 @@ export default function BarberRegistrationCard({
       })
       .finally(() => {
         closeDeleteRegister();
+        onSearch(true);
       });
   };
 
@@ -61,37 +65,66 @@ export default function BarberRegistrationCard({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5,
     });
 
     if (!result.canceled && result.assets.length > 0) {
       const selectedImage = result.assets[0];
       setImage(selectedImage.uri);
-      handleUpdateImage();
+      setSearch(true);
     }
   };
 
-  const handleUpdateImage = () => {
-    const updateRegister = {
-      imagem: image || "",
-    };
-    api
-      .patch(`/barbeiros/${barber.barbeiro_id}`, updateRegister, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        if (response) {
+  useEffect(() => {
+    if (search) {
+      handleUpdateImage();
+    }
+  }, [search]);
+
+  const handleUpdateImage = async () => {
+    console.log(image)
+    if (image) {
+      try {
+        const formData = new FormData();
+
+        const fileType = image.split('.').pop();
+        const fileUri = image.startsWith('file://') ? image : 'file://' + image;
+
+
+        formData.append("imagem", {
+          uri: fileUri,
+          name: `image.${fileType}`,
+          type: `image/${fileType}`,
+        } as any);
+
+        const response = await api.patch(
+          `/barbeiros/${barber.barbeiro_id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
           Alert.alert("Barbeiro alterado com sucesso!");
-          navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+        } else {
+          Alert.alert(
+            "Erro ao alterar o barbeiro. Por favor, tente novamente."
+          );
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      } catch (error) {
+        Alert.alert("Erro ao alterar o barbeiro. Por favor, tente novamente.");
+        console.log(error)
+      } finally {
+        onSearch(true);
+        setSearch(false);
+      }
+    }
   };
+
   useEffect(() => {
     if (barber.imagem) {
       const imageBase64 = barber.imagem.data.reduce((data, byte) => {
@@ -101,8 +134,6 @@ export default function BarberRegistrationCard({
       setImage(`data:image/png;base64,${btoa(imageBase64)}`);
     }
   }, [barber]);
-
-  console.log(image);
 
   return (
     <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
@@ -234,6 +265,15 @@ export default function BarberRegistrationCard({
             width: "100%",
           }}
         >
+          <Image
+            style={{
+              flex: 1,
+              resizeMode: "contain",
+              height: 300,
+              width: "100%",
+            }}
+            source={{ uri: image || ''}}
+          />
           <View style={{ marginBottom: 15 }}>
             <Button
               title="Abrir Camera"
@@ -256,7 +296,7 @@ export default function BarberRegistrationCard({
       <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
         <CameraSendImageModal
           onClose={setModalCamera}
-          onUpdateImage={handleUpdateImage}
+          onUpdateImage={() => setSearch(true)}
           onSetImage={setImage}
         />
       </Modal>

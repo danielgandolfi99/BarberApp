@@ -7,5 +7,5 @@ export type RegisterBarberProps = {
     type: string;
     data: number[];
   };
-  barbeiro_id: number;
+  barbeiro_id?: number;
 };

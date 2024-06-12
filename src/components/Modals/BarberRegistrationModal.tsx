@@ -21,21 +21,25 @@ import * as ImagePicker from "expo-image-picker";
 import { RegisterBarberProps } from "../../types/barber";
 import api from "../../services/api";
 import { stylesModal } from "../../pages/login";
+import { useSelector } from "react-redux";
+import { RootState } from "../../services/redux/store";
 
 interface BarberRegistrationModalProps {
   handleClose: () => void;
+  onSearch: (search: boolean) => void;
 }
 
 export default function BarberRegistrationModal({
   handleClose,
+  onSearch,
 }: BarberRegistrationModalProps) {
-  const navigation = useNavigation();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const [nome, setNome] = useState("");
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState<string | null>(null);
+  // const [image, setImage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const [search, setSearch] = useState(false);
@@ -82,29 +86,32 @@ export default function BarberRegistrationModal({
   }
 
   const handleSubmit = () => {
-    const check = checkValidSubmit();
-    if (check) {
-      setSearch(true);
-    }
+    // const check = checkValidSubmit();
+    // if (check) {
+    setSearch(true);
+    // }
   };
 
   useEffect(() => {
     if (search) {
-      const newRegister: RegisterBarberProps = {
+      const newRegister = {
         nome: nome,
-        celular: celular,
         email: email,
+        celular: celular,
         senha: password,
-        imagem: image || "",
+        imagem: null,
       };
+
       api
-        .post("/barbeiros", newRegister)
+        .post("/barbeiros", newRegister, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           if (response) {
-            Alert.alert(
-              "Barbeiro cadastrado com sucesso!",
-            );
-            navigation.navigate({ name: "Cadastro-Barbeiros" } as never);
+            Alert.alert("Barbeiro cadastrado com sucesso!");
           }
         })
         .catch((error) => {
@@ -116,35 +123,32 @@ export default function BarberRegistrationModal({
         })
         .finally(() => {
           setSearch(false);
+          handleClose();
+          onSearch(true);
         });
     }
   }, [search]);
 
-  const pickImageFromGallery = async () => {
-    setShowModal(false);
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert("O aplicativo não possui permissão para utilizar a câmera!");
-      return;
-    }
+  // const pickImageFromGallery = async () => {
+  //   setShowModal(false);
+  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //   if (status !== "granted") {
+  //     alert("O aplicativo não possui permissão para utilizar a câmera!");
+  //     return;
+  //   }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  //   const result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: true,
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
 
-    if (!result.canceled && result.assets.length > 0) {
-      const selectedImage = result.assets[0];
-      setImage(selectedImage.uri);
-      handleUpdateImage();
-    }
-  };
-
-  const handleUpdateImage = () => {
-    console.log("teste");
-  };
+  //   if (!result.canceled && result.assets.length > 0) {
+  //     const selectedImage = result.assets[0];
+  //     setImage(selectedImage.uri);
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
@@ -174,14 +178,14 @@ export default function BarberRegistrationModal({
         </View>
         <ScrollView style={styles.scrollView}>
           <View style={styles.modalContent}>
-            <Button onPress={() => setShowModal(true)} color="transparent">
+            {/* <Button onPress={() => setShowModal(true)} color="transparent">
               <Avatar
                 size={80}
                 rounded
                 containerStyle={{ backgroundColor: "#D9D9D9" }}
                 source={{ uri: image || " " }}
               />
-            </Button>
+            </Button> */}
             <TextInputStyled
               textName="Nome"
               value={nome}
@@ -219,7 +223,7 @@ export default function BarberRegistrationModal({
           </View>
         </ScrollView>
       </LinearGradient>
-      <Dialog
+      {/* <Dialog
         animationType="slide"
         transparent={true}
         isVisible={showModal}
@@ -251,14 +255,14 @@ export default function BarberRegistrationModal({
             />
           </View>
         </View>
-      </Dialog>
-      <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
+      </Dialog> */}
+      {/* <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
         <CameraSendImageModal
           onClose={setModalCamera}
-          onUpdateImage={handleUpdateImage}
+          onUpdateImage={() => setSearch(true)}
           onSetImage={setImage}
         />
-      </Modal>
+      </Modal> */}
       <Modal
         transparent={true}
         animationType="none"

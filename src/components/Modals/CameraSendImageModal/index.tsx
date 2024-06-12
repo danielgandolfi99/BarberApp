@@ -20,7 +20,7 @@ export default function CameraSendImageModal({
 }: ModalProps) {
   const cameraRef = useRef<Camera | null>(null);
   const [type, setType] = useState(CameraType.front);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>();
 
   const handleUpdateTypeCamera = () => {
     if (type === CameraType.front) {
@@ -32,6 +32,7 @@ export default function CameraSendImageModal({
 
   console.log(selectedImage);
 
+
   const takePicture = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -41,9 +42,8 @@ export default function CameraSendImageModal({
 
     try {
       if (cameraRef.current) {
-        const { uri } = await cameraRef.current.takePictureAsync();
+        const { uri } = await cameraRef.current.takePictureAsync({ quality: 0,  });
         // onSetImage(uri);
-        console.log("Picture taken:", uri);
         setSelectedImage(uri);
         // onClose(false);
         // onUpdateImage();
@@ -138,7 +138,7 @@ export default function CameraSendImageModal({
             color="error"
             title="Cancelar"
             containerStyle={{ marginBottom: 10 }}
-            onPress={() => setSelectedImage(null)}
+            onPress={() => setSelectedImage('')}
           />
         </View>
       )}
