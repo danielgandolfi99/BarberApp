@@ -42,7 +42,7 @@ export default function CameraSendImageModal({
 
     try {
       if (cameraRef.current) {
-        const { uri } = await cameraRef.current.takePictureAsync({ quality: 0,  });
+        const { uri } = await cameraRef.current.takePictureAsync({ quality: 0.5  });
         // onSetImage(uri);
         setSelectedImage(uri);
         // onClose(false);
