@@ -10,3 +10,9 @@ export type RegisterUserProps = {
   email: string;
   password: string;
 };
+
+export type userRegistrationData = {
+  user_id: number;
+  barbeiro_id: number | null;
+  name: string;
+};
