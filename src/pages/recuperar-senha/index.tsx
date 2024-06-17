@@ -7,6 +7,7 @@ import { Text } from "@rneui/base";
 import ButtonStyled from "../../components/ButtonStyled";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import api from "../../services/api";
 
 const RecuperarSenha = () => {
   const navigation = useNavigation();
@@ -33,11 +34,35 @@ const RecuperarSenha = () => {
       ]);
       return;
     }
-    Alert.alert(
-      "Sucesso",
-      "A senha provisória foi enviada para o seu e-mail.",
-      [{ text: "OK", onPress: goBack }]
-    );
+
+    try {
+      api
+        .post("/users/redefinir-senha", {
+          email: email,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            Alert.alert(
+              "Sucesso",
+              "A senha provisória foi enviada para o seu e-mail.",
+              [{ text: "OK", onPress: goBack }]
+            );
+          } else {
+            Alert.alert(
+              "Erro ao alterar email",
+              "Email não cadastrado no aplicativo.",
+              [{ text: "OK", onPress: goBack }]
+            );
+          }
+        })
+        .catch((error) => {
+          Alert.alert(
+            "Erro ao alterar email",
+            "Email não cadastrado no aplicativo.",
+            [{ text: "OK", onPress: goBack }]
+          );
+        });
+    } catch {}
   };
 
   return (

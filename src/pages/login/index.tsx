@@ -43,6 +43,7 @@ const Login = () => {
           if (response && response.data) {
             const { access_token } = response.data;
             dispatch(setToken(access_token));
+            
             navigation.navigate({ name: "Home Barbeiros" } as never);
           }
         })
