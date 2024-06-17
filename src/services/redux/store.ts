@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
+import agendamentoReducer from "./agendamento";
+import userReducer from "./agendamento";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    agendamento: agendamentoReducer,
+    user: userReducer,
   },
 });
 
