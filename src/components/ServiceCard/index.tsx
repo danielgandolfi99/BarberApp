@@ -16,17 +16,14 @@ export default function ServiceCard({
 }) {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const idServico = useSelector(
-    (state: RootState) => state.agendamento.idServico
-  );
 
   const handleAgendamento = () => {
-    dispatch(setIdServico(service.servico_id));
+    if (service.servico_id) {
+      dispatch(setIdServico(service.servico_id));
+    }
 
-    // navigation.navigate({ name: "Agendamento" } as never);
+    navigation.navigate({ name: "Agendamento" } as never);
   };
-
-  console.log(idServico);
 
   return (
     <Card containerStyle={styles.cardContainer}>
