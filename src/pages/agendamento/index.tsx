@@ -96,7 +96,7 @@ const PageAgendamento = () => {
               containerStyle={{ backgroundColor: "#D9D9D9", marginRight: 10 }}
               source={{ uri: handleImage(barber.imagem) }}
             />
-            <Text style={styles.nameBarber}>{barber?.nome}</Text>
+            <Text style={styles.nameBarber}>{barber?.nome ? barber.nome : 'Selecione o barbeiro'}</Text>
           </View>
           <Button
             buttonStyle={styles.button}
