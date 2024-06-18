@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import agendamentoReducer from "./agendamento";
-import userReducer from "./agendamento";
+import userReducer from "./user";
 
 const store = configureStore({
   reducer: {

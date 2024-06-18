@@ -2,6 +2,6 @@ export type AgendamentoProps = {
   idBarbeiro: number;
   idServico: number;
   idCliente: number;
-  dataInicio: Date;
-  dataFim: Date;
+  dataInicio: Date | null;
+  dataFim: Date | null;
 };

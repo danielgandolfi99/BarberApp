@@ -5,8 +5,8 @@ const initialState: AgendamentoProps = {
   idBarbeiro: 0,
   idServico: 0,
   idCliente: 0,
-  dataInicio: new Date(),
-  dataFim: new Date(),
+  dataInicio: null,
+  dataFim: null,
 };
 
 const agendamento = createSlice({
@@ -25,8 +25,8 @@ const agendamento = createSlice({
       state.idBarbeiro = 0;
       state.idServico = 0;
       state.idCliente = 0;
-      state.dataInicio = new Date();
-      state.dataFim = new Date();
+      state.dataInicio = null;
+      state.dataFim = null;
     },
     setIdServico(state, action: PayloadAction<number>) {
       state.idServico = action.payload;
