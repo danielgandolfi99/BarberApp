@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
 import { RegisterBarberProps } from "../../types/barber";
 import { stylesModal } from "../login";
+import { RegisterServiceProps } from "../../types/services";
 import moment, { Moment } from 'moment';
 import 'moment/locale/pt-br';
 
@@ -26,6 +27,9 @@ const PageAgendamento = () => {
   const navigation = useNavigation();
   const [modal, setModal] = useState(false);
   const [barberId, setBarberId] = useState(0);
+  const servicoId = useSelector(
+    (state: RootState) => state.agendamento.idServico
+  );
   const [search, setSearch] = useState(false);
   const [barber, setBarber] = useState<RegisterBarberProps>(
     {} as RegisterBarberProps
@@ -36,6 +40,26 @@ const PageAgendamento = () => {
   const [scrollX, setScrollX] = useState(0);
 
   moment.locale('pt-br');
+  const [service, setService] = useState<RegisterServiceProps>(
+    {} as RegisterServiceProps
+  );
+
+  useEffect(() => {
+    api
+      .get(`/servicos/${servicoId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          setService(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 
   useEffect(() => {
     if (search) {
@@ -123,12 +147,14 @@ const PageAgendamento = () => {
         subtitle="Escolha um barbeiro e horário de atendimento"
         onNavegatePage={handleReturn}
       />
-      <View style={styles.row}>
-        <Text style={styles.title1}>Corte de cabelo masculino</Text>
-        <Text style={styles.subtitle1}>
-          Total: <Text style={styles.subtitle2}>R$ 45,00</Text>
-        </Text>
-      </View>
+      {service && service.servico_id &&(
+        <View style={styles.row}>
+          <Text style={styles.title1}>{service.descricao}</Text>
+          <Text style={styles.subtitle1}>
+            Total: <Text style={styles.subtitle2}>{service.valor}</Text>
+          </Text>
+        </View>
+      )}
       <View style={styles.row2}>
         <Text style={styles.title2}>
           Por qual profissional você gostaria de ser atendido?
@@ -147,7 +173,9 @@ const PageAgendamento = () => {
               containerStyle={{ backgroundColor: "#D9D9D9", marginRight: 10 }}
               source={{ uri: handleImage(barber.imagem) }}
             />
-            <Text style={styles.nameBarber}>{barber?.nome ? barber.nome : 'Selecione o barbeiro'}</Text>
+            <Text style={styles.nameBarber}>
+              {barber?.nome ? barber.nome : "Selecione o barbeiro"}
+            </Text>
           </View>
           <Button
             buttonStyle={styles.button}
@@ -225,10 +253,10 @@ const PageAgendamento = () => {
           onSearch={setSearch}
         />
       </Modal>
-      <Modal transparent={true} visible={search} onRequestClose={() => {}}>
+      <Modal transparent={true} visible={search || !service.servico_id} onRequestClose={() => {}}>
         <View style={stylesModal.modalBackground}>
           <View style={stylesModal.activityIndicatorWrapper}>
-            <ActivityIndicator animating={search} size={50} />
+            <ActivityIndicator animating={search || !service.servico_id} size={50} />
           </View>
         </View>
       </Modal>
@@ -248,24 +276,24 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   title1: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#000",
     marginBottom: 20,
     fontFamily: "Ubuntu_500Medium",
   },
   title2: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#000",
     marginBottom: 20,
     fontFamily: "Ubuntu_500Medium",
   },
   subtitle1: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#000",
     fontFamily: "Ubuntu_500Medium",
   },
   subtitle2: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#06D6A0",
     textDecorationLine: "underline",
     fontFamily: "Ubuntu_500Medium",

@@ -7,6 +7,8 @@ import {
   TextInput,
   ScrollView,
   Linking,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/Feather";
@@ -17,6 +19,7 @@ import { useSelector } from "react-redux";
 import api from "../../services/api";
 import { RegisterServiceProps } from "../../types/services";
 import ServiceCard from "../../components/ServiceCard";
+import { stylesModal } from "../login";
 
 const TelaInicial = () => {
   const navigation = useNavigation();
@@ -31,7 +34,7 @@ const TelaInicial = () => {
   };
 
   useEffect(() => {
-    if (isSearching) {
+    // if (isSearching) {
       api
         .get("/servicos", {
           headers: {
@@ -50,8 +53,8 @@ const TelaInicial = () => {
         .finally(() => {
           setIsSearching(false);
         });
-    }
-  }, [isSearching]);
+    // }
+  }, []);
 
   useEffect(() => {
     setFilteredData(
@@ -132,6 +135,13 @@ const TelaInicial = () => {
             <ServiceCard key={index} service={value} />
           ))}
       </ScrollView>
+      <Modal transparent={true} visible={isSearching} onRequestClose={() => {}}>
+        <View style={stylesModal.modalBackground}>
+          <View style={stylesModal.activityIndicatorWrapper}>
+            <ActivityIndicator animating={isSearching} size={50} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
