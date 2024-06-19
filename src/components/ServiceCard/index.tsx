@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Button, Card } from "@rneui/base";
 import { RegisterServiceProps } from "../../types/services";
 import { useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import { AgendamentoProps } from "../../types/agendamento";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
+import Icon from 'react-native-vector-icons/Feather';
 
 export default function ServiceCard({
   service,
@@ -32,13 +33,12 @@ export default function ServiceCard({
           <Text style={styles.serviceTitle}>{service.titulo}</Text>
           <Text
             style={styles.servicePrice}
-          >{`R$ ${service.valor} - 30 mins`}</Text>
+          >{`R$ ${service.valor} • 1hr`}</Text>
         </View>
-        <Button
-          title="AGENDAR"
-          buttonStyle={styles.button}
-          onPress={handleAgendamento}
-        />
+        <TouchableOpacity style={styles.button} onPress={handleAgendamento}>
+          <Icon name="clock" size={12} color="#fff" style={styles.bookButtonIcon} />
+          <Text style={styles.buttonText}>AGENDAR</Text>
+        </TouchableOpacity>
       </View>
     </Card>
   );
@@ -46,10 +46,9 @@ export default function ServiceCard({
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginBottom: 10,
     padding: 0,
-    height: 70,
-    justifyContent: "center",
+    borderRadius: 8,
+    marginBottom: 4,
   },
   cardContent: {
     flexDirection: "row",
@@ -75,8 +74,19 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   button: {
-    backgroundColor: "#00D1B2",
-    paddingVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "#06D6A0",
+    borderRadius: 5,
+    paddingVertical: 10,
     paddingHorizontal: 15,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 12,
+  },
+  bookButtonIcon: {
+    marginRight: 5,
   },
 });

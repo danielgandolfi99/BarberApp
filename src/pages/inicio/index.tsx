@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, ScrollView, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { useState, useEffect } from "react";
@@ -12,15 +12,17 @@ import ServiceCard from '../../components/ServiceCard';
 const TelaInicial = () => {
   const navigation = useNavigation();
   const token = useSelector((state: RootState) => state.auth.token);
-  const [search, setSearch] = useState(true);
+  const [isSearching, setIsSearching] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState<RegisterServiceProps[]>([]);
+  const [filteredData, setFilteredData] = useState<RegisterServiceProps[]>([]);
 
   const handleReturn = () => {
     navigation.goBack();
   };
 
   useEffect(() => {
-    if (search) {
+    if (isSearching) {
       api
         .get("/servicos", {
           headers: {
@@ -28,19 +30,38 @@ const TelaInicial = () => {
           },
         })
         .then((response) => {
-          if (response) {
-            setData(response.data[0]);
+          if (response && response.data) {
+            setData(response.data);
+            setFilteredData(response.data);
           }
         })
         .catch((error) => {
           console.log(error);
         })
         .finally(() => {
-          setSearch(false);
+          setIsSearching(false);
         });
     }
-  }, [search]);
+  }, [isSearching]);
 
+  useEffect(() => {
+    setFilteredData(data.filter(service => 
+      service.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+    ));
+  }, [searchTerm, data]);
+
+  const openMaps = () => {
+    const latitude = -29.20304;
+    const longitude = -51.34898;
+    const url = `http://maps.google.com/?q=${latitude},${longitude}`;
+    Linking.openURL(url);
+  };
+
+  const openPhone = () => {
+    const phoneNumber = '+5551999999999';
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url);
+  };
 
   return (
     <View style={styles.container}>
@@ -57,39 +78,35 @@ const TelaInicial = () => {
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.title}>Salão corte certo</Text>
-          <Text style={styles.location}>Porto Alegre • 5.2kms</Text>
+          <Text style={styles.location}>Farroupilha</Text>
         </View>
       </ImageBackground>
       <View style={styles.actionButtonsContainer}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={styles.actionButton} onPress={openPhone}>
           <Icon name="phone" size={16} color="#000" />
           <Text style={styles.actionText}>Ligar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={styles.actionButton} onPress={openMaps}>
           <Icon name="map-pin" size={16} color="#000" />
           <Text style={styles.actionText}>Visitar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <Icon name="share" size={16} color="#000" />
-          <Text style={styles.actionText}>Compartilhar</Text>
-        </TouchableOpacity>
-        <View style={styles.bookButtonContainer}>
-          <TouchableOpacity style={styles.bookButton}>
-            <Icon name="clock" size={12} color="#fff" style={styles.bookButtonIcon} />
-            <Text style={styles.bookButtonText}>AGENDAR AGORA</Text>
-          </TouchableOpacity>
-          <Text style={styles.availableTimesText}>Horários Disponíveis</Text>
-        </View>
+        <Text style={styles.scheduleText}>
+          Agende agora, selecione um serviço e visualize os horarios disponíveis
+        </Text>
       </View>
       <View style={styles.servicesContainer}>
         <Text style={styles.servicesTitle}>Serviços</Text>
-        <TextInput style={styles.searchInput} placeholder="Pesquise um serviço..." />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Pesquise um serviço..."
+          value={searchTerm}
+          onChangeText={text => setSearchTerm(text)}
+        />
       </View>
       <ScrollView style={{ height: "80%" }}>
-        {data &&
-          data.map((value, index) => (
-            <ServiceCard key={index} service={value} />
-          ))}
+        {filteredData.length > 0 && filteredData.map((value, index) => (
+          <ServiceCard key={index} service={value} />
+        ))}
       </ScrollView>
     </View>
   );
@@ -135,49 +152,23 @@ const styles = StyleSheet.create({
   },
   actionButtonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingHorizontal: 5,
-    borderTopWidth: 1,
-    borderBottomWidth: 8,
-    borderColor: '#e0e0e0',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    height: 70,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    borderBottomWidth: 10,
+    borderBottomColor: '#e0e0e0',
   },
   actionButton: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginHorizontal: -20,
+    marginRight: 20,
   },
   actionText: {
     marginTop: 5,
-    fontSize: 10,
-    color: '#000',
-  },
-  bookButtonContainer: {
-    alignItems: 'center',
-    paddingRight: -50
-  },
-  bookButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 137,
-    height: 27,
-    backgroundColor: '#06D6A0',
-    borderRadius: 3,
-    paddingHorizontal: 10,
-  },
-  bookButtonIcon: {
-    marginRight: 5,
-  },
-  bookButtonText: {
-    color: '#fff',
-    fontSize: 9,
-  },
-  availableTimesText: {
-    marginTop: 2,
-    fontSize: 10,
-    color: '#2F3243',
+    fontSize: 12,
+    color: '#3C3C43',
   },
   servicesContainer: {
     paddingHorizontal: 20,
@@ -194,6 +185,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
+  },
+  scheduleText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#2F3243',
+    textAlign: 'center',
   },
 });
 
