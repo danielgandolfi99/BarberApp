@@ -19,8 +19,10 @@ import { RootState } from "../../services/redux/store";
 import { RegisterBarberProps } from "../../types/barber";
 import { stylesModal } from "../login";
 import { RegisterServiceProps } from "../../types/services";
-import moment, { Moment } from 'moment';
-import 'moment/locale/pt-br';
+import moment, { Moment } from "moment";
+import "moment/locale/pt-br";
+import { AgendamentoProps } from "../../types/agendamento";
+import { Alert } from "react-native";
 
 const PageAgendamento = () => {
   const token = useSelector((state: RootState) => state.auth.token);
@@ -30,6 +32,7 @@ const PageAgendamento = () => {
   const servicoId = useSelector(
     (state: RootState) => state.agendamento.idServico
   );
+  const userId = useSelector((state: RootState) => state.user.user_id);
   const [search, setSearch] = useState(false);
   const [barber, setBarber] = useState<RegisterBarberProps>(
     {} as RegisterBarberProps
@@ -38,8 +41,9 @@ const PageAgendamento = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const [scrollX, setScrollX] = useState(0);
+  const [freeTime, setFreeTime] = useState<number[]>([]);
 
-  moment.locale('pt-br');
+  moment.locale("pt-br");
   const [service, setService] = useState<RegisterServiceProps>(
     {} as RegisterServiceProps
   );
@@ -59,7 +63,7 @@ const PageAgendamento = () => {
       .catch((error) => {
         console.log(error);
       });
-  });
+  }, []);
 
   useEffect(() => {
     if (search) {
@@ -104,26 +108,91 @@ const PageAgendamento = () => {
     const dates = [];
     const currentDate = moment();
     for (let i = 0; i < 30; i++) {
-      dates.push(currentDate.clone().add(i, 'days'));
+      const date = currentDate.clone().add(i, "days");
+      if (date.day() !== 0) {
+        dates.push(date);
+      }
     }
     return dates;
   };
 
   const dates = generateDates();
-  const times = ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30'];
+  const times = [
+    { time: "09:00", value: 9 },
+    { time: "10:00", value: 10 },
+    { time: "11:00", value: 11 },
+    { time: "12:00", value: 12 },
+    { time: "13:00", value: 13 },
+    { time: "14:00", value: 14 },
+    { time: "15:00", value: 15 },
+    { time: "16:00", value: 16 },
+    { time: "17:00", value: 17 },
+  ];
 
   const handleDateSelect = (date: Moment) => {
     setSelectedDate(date);
     setSelectedTime(null);
+    const formatDate = date.format("YYYY-MM-DD");
+    handleSearchDateTime(formatDate);
   };
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
   };
 
+  const handleSearchDateTime = (date: string) => {
+    api
+      .get(`/barbeiros/${barber?.barbeiro_id}/horarios-livres?data=${date}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          setFreeTime(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleConfirm = () => {
-    console.log(`Date: ${selectedDate?.format('YYYY-MM-DD')}, Time: ${selectedTime}`);
-    navigation.goBack(); 
+    const selectedDateTime = `${selectedDate?.format(
+      "YYYY-MM-DD"
+    )} ${selectedTime}`;
+    const startDate = moment(selectedDateTime, "YYYY-MM-DD HH:mm");
+    const endDate = startDate.clone().add(1, "hour");
+
+    const formattedStartDateTime = startDate.format("YYYY-MM-DD HH:mm");
+    const formattedEndDateTime = endDate.format("YYYY-MM-DD HH:mm");
+
+    const newRegister = {
+      idServico: servicoId,
+      idCliente: userId,
+      dataInicio: formattedStartDateTime,
+      dataFim: formattedEndDateTime,
+    };
+
+    api
+      .post(`barbeiros/${barberId}/agendamento`, newRegister, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          Alert.alert("Agendamento realizado com sucesso!");
+          navigation.goBack();
+        }
+      })
+      .catch((error) => {
+        Alert.alert(
+          `Erro ${error.response.status}`,
+          "Erro ao realizar cadastro."
+        );
+        console.log(error);
+      });
   };
 
   const handleScroll = (event: any) => {
@@ -140,6 +209,13 @@ const PageAgendamento = () => {
   //   return scrollX === 0 && index === 0 ? 1 : 1 - Math.min(distanceFromCenter / maxDistance, 0.8);
   // };
 
+  const checkDisabledTime = (dateTime: number): boolean => {
+    if (!Array.isArray(freeTime) || freeTime.length === 0) {
+      return true;
+    }
+    return !freeTime.includes(dateTime);
+  };
+
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <Header
@@ -147,7 +223,7 @@ const PageAgendamento = () => {
         subtitle="Escolha um barbeiro e horário de atendimento"
         onNavegatePage={handleReturn}
       />
-      {service && service.servico_id &&(
+      {service && service.servico_id && (
         <View style={styles.row}>
           <Text style={styles.title1}>{service.descricao}</Text>
           <Text style={styles.subtitle1}>
@@ -187,53 +263,54 @@ const PageAgendamento = () => {
         </View>
       </View>
       <View style={styles.row2}>
-        <Text style={styles.subHeader}>Pra quando você gostaria de agendar?</Text>
-        <ScrollView
-          horizontal
-          style={styles.dateContainer}
-          showsHorizontalScrollIndicator={false}
-          ref={scrollViewRef}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          {dates.map((date, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.dateItem,
-                selectedDate?.isSame(date, 'day') && styles.selectedDateItem,
-              ]}
-              onPress={() => handleDateSelect(date)}
-            >
-              <Text style={[styles.dayText, selectedDate?.isSame(date, 'day') && styles.selectedText]}>
-                {date.format('ddd').charAt(0).toUpperCase() + date.format('ddd').slice(1)}
-              </Text>
-              <Text style={[styles.dateText, selectedDate?.isSame(date, 'day') && styles.selectedText]}>
-                {date.format('D')}
-              </Text>
-              <Text style={[styles.monthText, selectedDate?.isSame(date, 'day') && styles.selectedText]}>
-                {date.format('MMM').charAt(0).toUpperCase() + date.format('MMM').slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-      <View style={styles.row2}>
-        {selectedDate && (
+        {barber && barber.barbeiro_id && (
           <>
-            <Text style={[styles.subHeader]}>Que horas?</Text>
+            <Text style={styles.subHeader}>
+              Pra quando você gostaria de agendar?
+            </Text>
             <ScrollView
               horizontal
+              style={styles.dateContainer}
               showsHorizontalScrollIndicator={false}
+              ref={scrollViewRef}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
             >
-              {times.map((time, index) => (
+              {dates.map((date, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={[styles.timeItem, selectedTime === time && styles.selectedTimeItem]}
-                  onPress={() => handleTimeSelect(time)}
+                  style={[
+                    styles.dateItem,
+                    selectedDate?.isSame(date, "day") &&
+                      styles.selectedDateItem,
+                  ]}
+                  onPress={() => handleDateSelect(date)}
                 >
-                  <Text style={[styles.timeText, selectedTime === time && styles.selectedTimeText]}>
-                    {time}
+                  <Text
+                    style={[
+                      styles.dayText,
+                      selectedDate?.isSame(date, "day") && styles.selectedText,
+                    ]}
+                  >
+                    {date.format("ddd").charAt(0).toUpperCase() +
+                      date.format("ddd").slice(1)}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.dateText,
+                      selectedDate?.isSame(date, "day") && styles.selectedText,
+                    ]}
+                  >
+                    {date.format("D")}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.monthText,
+                      selectedDate?.isSame(date, "day") && styles.selectedText,
+                    ]}
+                  >
+                    {date.format("MMM").charAt(0).toUpperCase() +
+                      date.format("MMM").slice(1)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -241,9 +318,49 @@ const PageAgendamento = () => {
           </>
         )}
       </View>
+      <View style={styles.row2}>
+        {barber &&
+          barber.barbeiro_id &&
+          selectedDate &&
+          freeTime &&
+          freeTime.length > 0 && (
+            <>
+              <Text style={[styles.subHeader]}>Que horas?</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {times.map((dateTime, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.timeItem,
+                      selectedTime === dateTime.time && styles.selectedTimeItem,
+                      checkDisabledTime(dateTime.value) &&
+                        styles.disabledTimeItem,
+                    ]}
+                    onPress={() => handleTimeSelect(dateTime.time)}
+                    disabled={checkDisabledTime(dateTime.value)}
+                  >
+                    <Text
+                      style={[
+                        styles.timeText,
+                        selectedTime === dateTime.time &&
+                          styles.selectedTimeText,
+                        checkDisabledTime(dateTime.value) &&
+                          styles.disabledTextTimeItem,
+                      ]}
+                    >
+                      {dateTime.time}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </>
+          )}
+      </View>
       {selectedDate && selectedTime && (
         <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-          <Text style={styles.confirmButtonText}>Confirmar meu agendamento</Text>
+          <Text style={styles.confirmButtonText}>
+            Confirmar meu agendamento
+          </Text>
         </TouchableOpacity>
       )}
       <Modal transparent={true} visible={modal} onRequestClose={handleClose}>
@@ -253,10 +370,17 @@ const PageAgendamento = () => {
           onSearch={setSearch}
         />
       </Modal>
-      <Modal transparent={true} visible={search || !service.servico_id} onRequestClose={() => {}}>
+      <Modal
+        transparent={true}
+        visible={search || !service.servico_id}
+        onRequestClose={() => {}}
+      >
         <View style={stylesModal.modalBackground}>
           <View style={stylesModal.activityIndicatorWrapper}>
-            <ActivityIndicator animating={search || !service.servico_id} size={50} />
+            <ActivityIndicator
+              animating={search || !service.servico_id}
+              size={50}
+            />
           </View>
         </View>
       </Modal>
@@ -319,7 +443,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
     fontFamily: "Ubuntu_500Medium",
-    marginBottom: 20
+    marginBottom: 20,
   },
   dateContainer: {
     width: "100%",
@@ -334,58 +458,64 @@ const styles = StyleSheet.create({
     borderColor: "#C4C4C4",
     borderWidth: 1,
     opacity: 1,
-},
+  },
   dayText: {
     fontSize: 12,
-    color: '#333',
+    color: "#333",
   },
   dateText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   monthText: {
     fontSize: 12,
-    color: '#333',
+    color: "#333",
   },
   selectedDateItem: {
-    backgroundColor: '#7B2CBF',
+    backgroundColor: "#7B2CBF",
   },
   selectedText: {
-    color: '#fff',
+    color: "#fff",
   },
   timeItem: {
     width: 96,
     height: 24,
-    borderColor: '#C4C4C4',
+    borderColor: "#C4C4C4",
     borderWidth: 1,
     borderRadius: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
   },
   timeText: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
   },
   selectedTimeItem: {
-    backgroundColor: '#7B2CBF',
+    backgroundColor: "#7B2CBF",
   },
   selectedTimeText: {
-    color: '#fff',
+    color: "#fff",
+  },
+  disabledTimeItem: {
+    backgroundColor: "#F1F1F1",
+  },
+  disabledTextTimeItem: {
+    color: "#fff",
   },
   confirmButton: {
-    backgroundColor: '#7B2CBF',
+    backgroundColor: "#7B2CBF",
     borderRadius: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 335,
     height: 45,
-    alignSelf: 'center',
-    marginTop: 50
+    alignSelf: "center",
+    marginTop: 50,
   },
   confirmButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
 });
