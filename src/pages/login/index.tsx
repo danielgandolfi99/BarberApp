@@ -25,7 +25,6 @@ import { userRegistrationData } from "../../types/user";
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const token = useSelector((state: RootState) => state.auth.token);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,8 +42,6 @@ const Login = () => {
   //   }
   // }, [search]);
 
-  console.log("TOKEN: " + token);
-
   useEffect(() => {
     if (search) {
       api
@@ -54,12 +51,11 @@ const Login = () => {
         })
         .then((response) => {
           if (response && response.data) {
-            console.log(response.data);
             const { access_token } = response.data;
             dispatch(setToken(access_token));
-
+            console.log(access_token);
+            handleOpenPage(access_token);
             // navigation.navigate({ name: "Home Barbeiros" } as never);
-            handleOpenPage();
           }
         })
         .catch((error) => {
@@ -73,43 +69,35 @@ const Login = () => {
     }
   }, [search]);
 
-  const handleOpenPage = () => {
-    try {
-      api
-        .get("/auth/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          if (response && response.data) {
-            console.log(response.data);
-            const userRegister: userRegistrationData = {
-              user_id: response.data.user_id,
-              barbeiro_id: response.data.barbeiro_id,
-              name: "",
-            };
-            dispatch(setUser(userRegister));
-            if (response.data.barbeiro_id !== null) {
-              navigation.navigate({ name: "Home Barbeiros" } as never);
-            } else {
-              navigation.navigate({ name: "Tela Inicial" } as never);
-            }
+  const handleOpenPage = async (token: string) => {
+    await api
+      .get("/auth/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response && response.data) {
+          const userRegister: userRegistrationData = {
+            user_id: response.data.user_id,
+            barbeiro_id: response.data.barbeiro_id,
+            name: "",
+          };
+          console.log(userRegister);
+          console.log("TOKEN: " + token);
+          dispatch(setUser(userRegister));
+          if (response.data.barbeiro_id !== null) {
+            navigation.navigate({ name: "Home Barbeiros" } as never);
+          } else {
+            navigation.navigate({ name: "Tela Inicial" } as never);
           }
-        });
-    } catch {}
+        }
+      });
   };
 
-  // useEffect(() => {
-  //   if (search) {
-  //   }
-  // }, [search]);
+  // console.log(token);
 
   const handleSubmit = () => {
-    // if (token === null) {
-    //   await dispatch(clearToken());
-    //   console.log("token quebrada");
-    // }
     if (!email || !password) {
       // Alert.alert(
       //   "Formulário incompleto!",
