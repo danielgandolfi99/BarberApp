@@ -12,7 +12,7 @@ export type RegisterUserProps = {
 };
 
 export type userRegistrationData = {
-  user_id: number;
+  cliente_id: number;
   barbeiro_id: number | null;
   name: string;
 };

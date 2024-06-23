@@ -79,7 +79,7 @@ const Login = () => {
       .then((response) => {
         if (response && response.data) {
           const userRegister: userRegistrationData = {
-            user_id: response.data.user_id,
+            cliente_id: response.data.cliente_id,
             barbeiro_id: response.data.barbeiro_id,
             name: "",
           };

@@ -32,7 +32,7 @@ const PageAgendamento = () => {
   const servicoId = useSelector(
     (state: RootState) => state.agendamento.idServico
   );
-  const userId = useSelector((state: RootState) => state.user.user_id);
+  const clienteId = useSelector((state: RootState) => state.user.cliente_id);
   const [search, setSearch] = useState(false);
   const [barber, setBarber] = useState<RegisterBarberProps>(
     {} as RegisterBarberProps
@@ -169,7 +169,7 @@ const PageAgendamento = () => {
 
     const newRegister = {
       idServico: servicoId,
-      idCliente: userId,
+      idCliente: clienteId,
       dataInicio: formattedStartDateTime,
       dataFim: formattedEndDateTime,
     };

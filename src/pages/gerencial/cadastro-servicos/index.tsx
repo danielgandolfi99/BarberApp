@@ -31,7 +31,7 @@ const CadastroServicos = () => {
         })
         .then((response) => {
           if (response) {
-            setData(response.data[0]);
+            setData(response.data);
           }
         })
         .catch((error) => {
@@ -62,14 +62,16 @@ const CadastroServicos = () => {
       />
       <ScrollView style={{ height: "80%" }}>
         {data &&
+          data.length > 0 &&
           data.map((value, index) => (
-            <ServiceRegistrationCard key={index} service={value} onServiceDeleted={handleServiceDeleted} />
+            <ServiceRegistrationCard
+              key={index}
+              service={value}
+              onServiceDeleted={handleServiceDeleted}
+            />
           ))}
       </ScrollView>
-      <ButtonStyled
-        name="Adicionar"
-        onPress={() => setVisibleModal(true)}
-      />
+      <ButtonStyled name="Adicionar" onPress={() => setVisibleModal(true)} />
       <Modal
         animationType="slide"
         transparent={true}
