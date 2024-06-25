@@ -125,6 +125,7 @@ const Cadastro = () => {
         placeholder="Digite seu celular"
         autoCapitalizeNone
         keyboardTypeNumeric
+        phone
       />
       <TextInputStyled
         textName="E-mail"

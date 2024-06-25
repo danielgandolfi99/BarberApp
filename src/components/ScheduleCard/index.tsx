@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Dialog } from "@rneui/themed";
 import { AgendaBarbeiroProps } from "../../types/agendamento";
 import moment from "moment";
+import { formatPhone } from "../../utils/formatPhone";
 
 export default function ScheduleCard({
   schedule,
@@ -66,7 +67,10 @@ export default function ScheduleCard({
             <Text style={styles.description}>
               {schedule.titulo} {" - "} {"R$" + schedule.valor}
             </Text>
-            <Text style={styles.subtitle}>Contato: {schedule.celular}</Text>
+            <Text style={styles.subtitle}>
+              Contato:{" "}
+              {schedule.celular && formatPhone({ phone: schedule.celular })}
+            </Text>
             <Text style={styles.subtitle}>
               Horário: {startTime} - {endTime}
             </Text>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
+import { TextInputMask } from "react-native-masked-text";
 
 interface TextProps {
   textName: string;
@@ -11,6 +12,7 @@ interface TextProps {
   placeholder?: string;
   autoCapitalizeNone?: boolean;
   keyboardTypeNumeric?: boolean;
+  phone?: boolean;
 }
 
 function TextInputStyled({
@@ -20,7 +22,8 @@ function TextInputStyled({
   secureTextEntry,
   placeholder,
   autoCapitalizeNone,
-  keyboardTypeNumeric
+  keyboardTypeNumeric,
+  phone,
 }: TextProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,15 +35,33 @@ function TextInputStyled({
     <View style={styles.container}>
       <Text style={styles.text}>{textName}</Text>
       <View style={styles.row}>
-        <TextInput
-          style={styles.input}
-          value={value}
-          onChangeText={setValue}
-          secureTextEntry={secureTextEntry ? !showPassword : false}
-          placeholder={placeholder}
-          autoCapitalize={autoCapitalizeNone ? "none" : "sentences"}
-          keyboardType={keyboardTypeNumeric ? 'numeric' : 'default'}
-        />
+        {phone ? (
+          <TextInputMask
+            style={styles.input}
+            type={"cel-phone"}
+            options={{
+              maskType: "BRL",
+              withDDD: true,
+              dddMask: "(99) ",
+            }}
+            value={value}
+            onChangeText={setValue}
+            placeholder={placeholder}
+            autoCapitalize={autoCapitalizeNone ? "none" : "sentences"}
+            keyboardType={keyboardTypeNumeric ? "numeric" : "default"}
+            secureTextEntry={secureTextEntry ? !showPassword : false}
+          />
+        ) : (
+          <TextInput
+            style={styles.input}
+            value={value}
+            onChangeText={setValue}
+            secureTextEntry={secureTextEntry ? !showPassword : false}
+            placeholder={placeholder}
+            autoCapitalize={autoCapitalizeNone ? "none" : "sentences"}
+            keyboardType={keyboardTypeNumeric ? "numeric" : "default"}
+          />
+        )}
         {secureTextEntry && (
           <TouchableOpacity
             onPress={togglePasswordVisibility}
