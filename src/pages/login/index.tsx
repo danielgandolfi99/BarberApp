@@ -81,7 +81,7 @@ const Login = () => {
           const userRegister: userRegistrationData = {
             cliente_id: response.data.cliente_id,
             barbeiro_id: response.data.barbeiro_id,
-            name: "",
+            name: response.data.name,
           };
           console.log(userRegister);
           console.log("TOKEN: " + token);
@@ -99,24 +99,24 @@ const Login = () => {
 
   const handleSubmit = () => {
     if (!email || !password) {
-      // Alert.alert(
-      //   "Formulário incompleto!",
-      //   "Preencha todos os campos para entrar."
-      // );
+      Alert.alert(
+        "Formulário incompleto!",
+        "Preencha todos os campos para entrar."
+      );
       setMessage("Preencha todos os campos para entrar.");
-      // } else if (!isValidEmail()) {
-      // Alert.alert(
-      //   "Email Incorreto",
-      //   "Por favor, insira um endereço de e-mail válido."
-      // );
-      // setMessage("Por favor, insira um endereço de e-mail válido.");
-      // return;
-      // } else if (password && password.length < 6) {
-      // Alert.alert(
-      //   "Senha Fraca",
-      //   "A senha precisa conter pelo menos 6 caracteres."
-      // );
-      // setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
+    } else if (!isValidEmail()) {
+      Alert.alert(
+        "Email Incorreto",
+        "Por favor, insira um endereço de e-mail válido."
+      );
+      setMessage("Por favor, insira um endereço de e-mail válido.");
+      return;
+    } else if (password && password.length < 6) {
+      Alert.alert(
+        "Senha Fraca",
+        "A senha precisa conter pelo menos 6 caracteres."
+      );
+      setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
     } else {
       console.log("Email: " + email);
       console.log("Senha: " + password);

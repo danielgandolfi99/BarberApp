@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { Avatar, Button } from "@rneui/base";
+import { Avatar, Button, Dialog } from "@rneui/base";
 import { useEffect, useState, useRef } from "react";
 import SelectedBarberModal from "../../components/Modals/SelectedBarberModal";
 import api from "../../services/api";
@@ -34,6 +34,7 @@ const PageAgendamento = () => {
   );
   const clienteId = useSelector((state: RootState) => state.user.cliente_id);
   const [search, setSearch] = useState(false);
+  const [modalConfirm, setModalConfirm] = useState(false);
   const [barber, setBarber] = useState<RegisterBarberProps>(
     {} as RegisterBarberProps
   );
@@ -216,6 +217,10 @@ const PageAgendamento = () => {
     return !freeTime.includes(dateTime);
   };
 
+  const closeModalConfirm = () => {
+    setModalConfirm(false);
+  };
+
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <Header
@@ -357,12 +362,37 @@ const PageAgendamento = () => {
           )}
       </View>
       {selectedDate && selectedTime && (
-        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+        <TouchableOpacity style={styles.confirmButton} onPress={() => setModalConfirm(true)}>
           <Text style={styles.confirmButtonText}>
             Confirmar meu agendamento
           </Text>
         </TouchableOpacity>
       )}
+      <Dialog
+        animationType="slide"
+        isVisible={modalConfirm}
+        onBackdropPress={closeModalConfirm}
+        style={{ backgroundColor: "#fff" }}
+      >
+        <Dialog.Title title="Excluir Atendimento" />
+        <Text>Tem certeza que confirmar o atendimento?</Text>
+        <View style={styles.dialogActions}>
+          <Button
+            color="transparent"
+            title="Cancelar"
+            titleStyle={{ color: "red" }}
+            onPress={closeModalConfirm}
+            buttonStyle={{ padding: 0 }}
+          />
+          <Button
+            color="transparent"
+            title="Confirmar"
+            titleStyle={{ color: "green" }}
+            onPress={handleConfirm}
+            buttonStyle={{ padding: 0 }}
+          />
+        </View>
+      </Dialog>
       <Modal transparent={true} visible={modal} onRequestClose={handleClose}>
         <SelectedBarberModal
           onSelectedBarberId={setBarberId}
@@ -517,6 +547,12 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  dialogActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    alignItems: "flex-end",
   },
 });
 

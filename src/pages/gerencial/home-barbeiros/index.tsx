@@ -10,6 +10,7 @@ import { clearToken } from "../../../services/redux/authSlice";
 
 const HomeBarbeiros = () => {
   const navigation = useNavigation();
+  const username = useSelector((state: RootState) => state.user.name);
 
   const handleReturn = () => {
     navigation.goBack();
@@ -18,7 +19,7 @@ const HomeBarbeiros = () => {
   return (
     <View style={{ flex: 1, alignItems: "center" }}>
       <Header
-        title="Olá fulaninho"
+        title={`Olá ${username}`}
         subtitle="Esculpindo estilos, criando obras-primas."
         onNavegatePage={handleReturn}
       />
