@@ -24,6 +24,7 @@ import CadastroServicos from "./src/pages/gerencial/cadastro-servicos";
 import TelaInicial from "./src/pages/inicio";
 import Agendamento from "./src/pages/agendamento";
 import AgendaCliente from "./src/pages/cliente/agendamentos";
+import Agenda from "./src/pages/gerencial/agenda";
 
 const Stack = createStackNavigator();
 
@@ -76,6 +77,7 @@ export default function App() {
             <Stack.Screen name="Tela Inicial" component={TelaInicial} />
             <Stack.Screen name="Agendamento" component={Agendamento} />
             <Stack.Screen name="Meus Agendamentos" component={AgendaCliente} />
+            <Stack.Screen name="Minha Agenda" component={Agenda} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

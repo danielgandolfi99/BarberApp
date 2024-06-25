@@ -26,7 +26,7 @@ const HomeBarbeiros = () => {
         <HomeBarberButton
           name={"Minha\nAgenda"}
           icon="calendar-alt"
-          navigatePage="Home Barbeiros"
+          navigatePage="Minha Agenda"
         />
         <HomeBarberButton
           name={"Meus\nServiços"}
