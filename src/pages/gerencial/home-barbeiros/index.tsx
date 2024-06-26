@@ -23,7 +23,7 @@ const HomeBarbeiros = () => {
       <View style={{marginTop: 15}}>
         <HomeBarberButton name={"Minha\nAgenda"} icon="calendar-alt" navigatePage="Home Barbeiros"/>
         <HomeBarberButton name={"Meus\nServiços"} icon="cut" navigatePage="Cadastro Servicos"/>
-        <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Home Barbeiros"/>
+        <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Relatorios"/>
         <HomeBarberButton name={"Barbeiros"}icon="user-alt" navigatePage="Cadastro Barbeiros"/>
         <HomeBarberButton name={"Tela Inicial"}icon="" navigatePage="Tela Inicial"/>
       </View>

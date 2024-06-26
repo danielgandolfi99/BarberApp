@@ -22,6 +22,7 @@ import HomeBarbeiros from "./src/pages/gerencial/home-barbeiros";
 import RecuperarSenha from "./src/pages/recuperar-senha";
 import CadastroServicos from "./src/pages/gerencial/cadastro-servicos";
 import TelaInicial from "./src/pages/inicio";
+import Relatorios from "./src/pages/relatorios";
 
 
 const Stack = createStackNavigator();
@@ -70,6 +71,7 @@ export default function App() {
             <Stack.Screen name="Recuperar Senha" component={RecuperarSenha} />
             <Stack.Screen name="Cadastro Servicos" component={CadastroServicos} />
             <Stack.Screen name="Tela Inicial" component={TelaInicial} />
+            <Stack.Screen name="Relatorios" component={Relatorios} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
