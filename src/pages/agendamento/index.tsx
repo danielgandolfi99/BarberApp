@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { Avatar, Button, Dialog } from "@rneui/base";
+import { Avatar, Button } from "@rneui/base";
 import { useEffect, useState, useRef } from "react";
 import SelectedBarberModal from "../../components/Modals/SelectedBarberModal";
 import api from "../../services/api";
@@ -23,6 +23,7 @@ import moment, { Moment } from "moment";
 import "moment/locale/pt-br";
 import { AgendamentoProps } from "../../types/agendamento";
 import { Alert } from "react-native";
+import { Dialog } from "@rneui/themed";
 
 const PageAgendamento = () => {
   const token = useSelector((state: RootState) => state.auth.token);
@@ -362,7 +363,10 @@ const PageAgendamento = () => {
           )}
       </View>
       {selectedDate && selectedTime && (
-        <TouchableOpacity style={styles.confirmButton} onPress={() => setModalConfirm(true)}>
+        <TouchableOpacity
+          style={styles.confirmButton}
+          onPress={() => setModalConfirm(true)}
+        >
           <Text style={styles.confirmButtonText}>
             Confirmar meu agendamento
           </Text>
