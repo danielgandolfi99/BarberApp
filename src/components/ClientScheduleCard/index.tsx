@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Alert,
+} from "react-native";
 import { Button, Card, Dialog } from "@rneui/base";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { AgendaClienteProps } from "../../types/agendamento";
-import StarRating from 'react-native-star-rating-widget';
+import StarRating from "react-native-star-rating-widget";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
@@ -18,7 +25,7 @@ export default function ClientScheduleCard({
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
-  const token = useSelector((state: RootState) => state.auth.token)
+  const token = useSelector((state: RootState) => state.auth.token);
   const [deleteSchedule, setDeleteSchedule] = useState(false);
 
   const handleEvaluate = () => {
@@ -45,17 +52,17 @@ export default function ClientScheduleCard({
       .then((response) => {
         if (response) {
           Alert.alert(
-              "Agendamento cancelado com sucesso!",
-              "",
-              [
-                {
-                  text: "OK",
-                  onPress: () => {
-                    onScheduleDeleted();
-                  },
+            "Agendamento cancelado com sucesso!",
+            "",
+            [
+              {
+                text: "OK",
+                onPress: () => {
+                  onScheduleDeleted();
                 },
-              ],
-              { cancelable: false }
+              },
+            ],
+            { cancelable: false }
           );
         }
       })
@@ -69,23 +76,46 @@ export default function ClientScheduleCard({
 
   return (
     <>
-      <Card containerStyle={schedule.finalizado ? styles.cardContainerFinalizado : styles.cardContainer}>
+      <Card
+        containerStyle={
+          // schedule.finalizado
+          //   ? styles.cardContainerFinalizado
+          styles.cardContainer
+        }
+      >
         <View style={styles.cardContent}>
           <View style={styles.textContainer}>
             <Text style={styles.serviceTitle}>{schedule.servico}</Text>
-            <Text style={styles.serviceDetails}>Barbeiro: {schedule.barbeiro}</Text>
-            <Text style={styles.serviceDetails}>Data: {moment(schedule.dt_inicio).format('DD/MM/YYYY HH:mm')}</Text>
+            <Text style={styles.serviceDetails}>
+              Barbeiro: {schedule.barbeiro}
+            </Text>
+            <Text style={styles.serviceDetails}>
+              Data:{" "}
+              {moment(schedule.dt_inicio)
+                .add(3, "hours")
+                .format("DD/MM/YYYY HH:mm")}
+            </Text>
             <Text style={styles.serviceDetails}>Preço: {schedule.valor}</Text>
           </View>
           <View style={styles.iconContainer}>
             {schedule.finalizado ? (
-              <TouchableOpacity onPress={handleEvaluate} style={styles.iconButton}>
-                <Icon name="star" size={25} color="#FFD700" style={styles.icon} />
-              </TouchableOpacity>
+              <Button
+                containerStyle={{ alignSelf: "flex-end" }}
+                color="transparent"
+                buttonStyle={styles.iconButton}
+                onPress={handleEvaluate}
+              >
+                <Icon name="star" size={30} color="#FFD700" />
+              </Button>
             ) : (
-              <TouchableOpacity onPress={() => setDeleteSchedule(true)} style={styles.iconButton}>
-                <Icon name="trash" size={25} color="#FF0000" style={styles.icon} />
-              </TouchableOpacity>
+              <Button
+                containerStyle={{ alignSelf: "flex-end" }}
+                color="transparent"
+                buttonStyle={styles.iconButton}
+                onPress={() => setDeleteSchedule(true)}
+              >
+                <Icon name="delete" color="#D62828" size={30} />
+              </Button>
             )}
           </View>
         </View>
@@ -95,25 +125,25 @@ export default function ClientScheduleCard({
           onBackdropPress={closeDeleteSchedule}
           overlayStyle={styles.dialogOverlay}
         >
-        <Dialog.Title title="Cancelar agendamento" />
-        <Text>Tem certeza que deseja cancelar o agendamento?</Text>
-        <View style={styles.dialogActions}>
-          <Button
-            color="transparent"
-            title="Cancelar"
-            titleStyle={{ color: "red" }}
-            onPress={closeDeleteSchedule}
-            buttonStyle={{ padding: 0 }}
-          />
-          <Button
-            color="transparent"
-            title="Confirmar"
-            titleStyle={{ color: "green" }}
-            onPress={handleDeleteSchedule}
-            buttonStyle={{ padding: 0 }}
-          />
-        </View>
-      </Dialog>
+          <Dialog.Title title="Cancelar agendamento" />
+          <Text>Tem certeza que deseja cancelar o agendamento?</Text>
+          <View style={styles.dialogActions}>
+            <Button
+              color="transparent"
+              title="Cancelar"
+              titleStyle={{ color: "red" }}
+              onPress={closeDeleteSchedule}
+              buttonStyle={{ padding: 0 }}
+            />
+            <Button
+              color="transparent"
+              title="Confirmar"
+              titleStyle={{ color: "green" }}
+              onPress={handleDeleteSchedule}
+              buttonStyle={{ padding: 0 }}
+            />
+          </View>
+        </Dialog>
       </Card>
 
       <Modal
@@ -149,14 +179,14 @@ const styles = StyleSheet.create({
     padding: 0,
     borderRadius: 8,
     marginBottom: 4,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#9D4EDD",
   },
-  cardContainerFinalizado: {
-    padding: 0,
-    borderRadius: 8,
-    marginBottom: 4,
-    backgroundColor: "#ececec",
-  },
+  // cardContainerFinalizado: {
+  //   padding: 0,
+  //   borderRadius: 8,
+  //   marginBottom: 4,
+  //   backgroundColor: "#ececec",
+  // },
   cardContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -168,19 +198,21 @@ const styles = StyleSheet.create({
   },
   serviceTitle: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
+    fontFamily: "Montserrat_700Bold",
+    color: "#fff",
   },
   serviceDetails: {
     fontSize: 14,
-    color: "#666",
+    fontFamily: "Montserrat_500Medium",
+    color: "#fff",
   },
   iconContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
+    flexDirection: "column",
+    alignItems: "center",
   },
   iconButton: {
-    marginVertical: 5,
+    padding: 1,
+    backgroundColor: "#b27edb",
   },
   icon: {
     marginHorizontal: 10,

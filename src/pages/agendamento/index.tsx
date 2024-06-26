@@ -233,7 +233,7 @@ const PageAgendamento = () => {
         <View style={styles.row}>
           <Text style={styles.title1}>{service.descricao}</Text>
           <Text style={styles.subtitle1}>
-            Total: <Text style={styles.subtitle2}>{service.valor}</Text>
+            Total: <Text style={styles.subtitle2}>R$ {service.valor}</Text>
           </Text>
         </View>
       )}
@@ -378,7 +378,7 @@ const PageAgendamento = () => {
         onBackdropPress={closeModalConfirm}
         style={{ backgroundColor: "#fff" }}
       >
-        <Dialog.Title title="Excluir Atendimento" />
+        <Dialog.Title title="Confirmar Atendimento" />
         <Text>Tem certeza que confirmar o atendimento?</Text>
         <View style={styles.dialogActions}>
           <Button

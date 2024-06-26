@@ -44,11 +44,6 @@ const HomeBarbeiros = () => {
           icon="user-alt"
           navigatePage="Cadastro Barbeiros"
         />
-        <HomeBarberButton
-          name={"Tela Inicial"}
-          icon=""
-          navigatePage="Tela Inicial"
-        />
       </View>
     </View>
   );

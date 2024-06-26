@@ -104,19 +104,19 @@ const Login = () => {
         "Preencha todos os campos para entrar."
       );
       setMessage("Preencha todos os campos para entrar.");
-    } else if (!isValidEmail()) {
-      Alert.alert(
-        "Email Incorreto",
-        "Por favor, insira um endereço de e-mail válido."
-      );
-      setMessage("Por favor, insira um endereço de e-mail válido.");
-      return;
-    } else if (password && password.length < 6) {
-      Alert.alert(
-        "Senha Fraca",
-        "A senha precisa conter pelo menos 6 caracteres."
-      );
-      setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
+    // } else if (!isValidEmail()) {
+    //   Alert.alert(
+    //     "Email Incorreto",
+    //     "Por favor, insira um endereço de e-mail válido."
+    //   );
+    //   setMessage("Por favor, insira um endereço de e-mail válido.");
+    //   return;
+    // } else if (password && password.length < 6) {
+    //   Alert.alert(
+    //     "Senha Fraca",
+    //     "A senha precisa conter pelo menos 6 caracteres."
+    //   );
+    //   setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
     } else {
       console.log("Email: " + email);
       console.log("Senha: " + password);

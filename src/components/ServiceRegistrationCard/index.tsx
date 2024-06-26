@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Alert, StyleSheet } from "react-native";
 import { Button, Card } from "@rneui/base";
-import Icon from "react-native-vector-icons/AntDesign";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
@@ -32,17 +32,17 @@ export default function ServiceRegistrationCard({
       .then((response) => {
         if (response) {
           Alert.alert(
-              "Serviço excluido com sucesso!",
-              "",
-              [
-                {
-                  text: "OK",
-                  onPress: () => {
-                    onServiceDeleted();
-                  },
+            "Serviço excluido com sucesso!",
+            "",
+            [
+              {
+                text: "OK",
+                onPress: () => {
+                  onServiceDeleted();
                 },
-              ],
-              { cancelable: false }
+              },
+            ],
+            { cancelable: false }
           );
         }
       })
@@ -73,7 +73,7 @@ export default function ServiceRegistrationCard({
             buttonStyle={styles.deleteButton}
             onPress={() => setDeleteService(true)}
           >
-            <Icon name="deleteuser" color="#D62828" size={35} />
+            <Icon name="delete" color="#D62828" size={35} />
           </Button>
         </View>
       </Card>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Alert, StyleSheet } from "react-native";
 import { Button, Card } from "@rneui/base";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import IconCheck from "react-native-vector-icons/Ionicons";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
@@ -83,6 +84,18 @@ export default function ScheduleCard({
           >
             <Icon name="delete" color="#D62828" size={30} />
           </Button>
+          <Button
+            containerStyle={styles.deleteButtonContainer}
+            color="transparent"
+            buttonStyle={styles.deleteButton}
+            onPress={() => setDeleteSchedule(true)}
+          >
+            <IconCheck
+              name="checkmark-circle"
+              color="green"
+              size={30}
+            />
+          </Button>
         </View>
       </Card>
       <Dialog
@@ -155,6 +168,7 @@ const styles = StyleSheet.create({
   },
   deleteButtonContainer: {
     alignSelf: "flex-end",
+    margin: 5,
   },
   deleteButton: {
     padding: 0,
