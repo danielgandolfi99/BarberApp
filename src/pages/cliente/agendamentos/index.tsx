@@ -1,59 +1,84 @@
 import {
   View,
-  Text,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
   ScrollView,
-  Linking,
+  StyleSheet,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Icon from "react-native-vector-icons/Feather";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../services/redux/store";
 import api from "../../../services/api";
+import ClientScheduleCard from "../../../components/ClientScheduleCard";
+import Header from "../../../components/Header";
+import { AgendaClienteProps } from "../../../types/agendamento";
 
 const AgendaCliente = () => {
   const navigation = useNavigation();
   const token = useSelector((state: RootState) => state.auth.token);
   const [loading, setLoading] = useState(true);
-  const [agendamentos, setAgendamentos] = useState();
+  const [agendamentos, setAgendamentos] = useState<AgendaClienteProps[]>([]);
+  const [search, setSearch] = useState(true);
+  const clienteId = useSelector((state: RootState) => state.user.cliente_id);
+  const [data, setData] = useState<AgendaClienteProps[]>([]);
 
   const handleReturn = () => {
     navigation.goBack();
   };
 
-  async function getData() {
-    await api
-      .get("/servicos", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        if (response && response.data) {
-          setAgendamentos(response.data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => setLoading(false));
-  }
+  const handleScheduleDeleted = () => {
+    setSearch(true);
+  };
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (search) {
+      api
+        .get(`/clientes/${clienteId}/horarios`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          if (response) {
+            const sortedData = response.data.sort((a: AgendaClienteProps, b: AgendaClienteProps) => {
+              if (a.finalizado !== b.finalizado) {
+                return a.finalizado ? 1 : -1;
+              }
+              if (a.finalizado) {
+                return new Date(b.dt_inicio).getTime() - new Date(a.dt_inicio).getTime();
+              } else {
+                return new Date(a.dt_inicio).getTime() - new Date(b.dt_inicio).getTime();
+              }
+            });
+            setData(sortedData);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    }
+  }, [search]);
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={["rgba(47, 50, 67, 0.585)", "rgba(33, 35, 47, 0.765)"]}
-        style={styles.gradient}
+      <Header
+        title="Meus agendamentos"
+        subtitle="Gerencie seus agendamentos"
+        onNavegatePage={handleReturn}
       />
+      <ScrollView style={{ height: "80%" }}>
+        {data &&
+          data.length > 0 &&
+          data.map((value, index) => (
+            <ClientScheduleCard
+              key={index}
+              schedule={value}
+              onScheduleDeleted={handleScheduleDeleted}
+            />
+          ))}
+      </ScrollView>
     </View>
   );
 };
