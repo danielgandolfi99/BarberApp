@@ -25,8 +25,9 @@ export type AgendaClienteProps = {
   cliente_id: number;
   dt_inicio: string;
   dt_fim: string;
-  finalizado: boolean;
+  finalizado: number;
   valor: string;
-  barbeiro: string;
+  nome_barbeiro: string;
   servico: string;
+  descricao_servico: string;
 };

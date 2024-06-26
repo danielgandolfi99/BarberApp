@@ -1,8 +1,4 @@
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -39,16 +35,25 @@ const AgendaCliente = () => {
         })
         .then((response) => {
           if (response) {
-            const sortedData = response.data.sort((a: AgendaClienteProps, b: AgendaClienteProps) => {
-              if (a.finalizado !== b.finalizado) {
-                return a.finalizado ? 1 : -1;
+            const sortedData = response.data.sort(
+              (a: AgendaClienteProps, b: AgendaClienteProps) => {
+                if (a.finalizado !== b.finalizado) {
+                  return a.finalizado ? 1 : -1;
+                }
+                if (a.finalizado) {
+                  return (
+                    new Date(b.dt_inicio).getTime() -
+                    new Date(a.dt_inicio).getTime()
+                  );
+                } else {
+                  return (
+                    new Date(a.dt_inicio).getTime() -
+                    new Date(b.dt_inicio).getTime()
+                  );
+                }
               }
-              if (a.finalizado) {
-                return new Date(b.dt_inicio).getTime() - new Date(a.dt_inicio).getTime();
-              } else {
-                return new Date(a.dt_inicio).getTime() - new Date(b.dt_inicio).getTime();
-              }
-            });
+              
+            );
             setData(sortedData);
           }
         })

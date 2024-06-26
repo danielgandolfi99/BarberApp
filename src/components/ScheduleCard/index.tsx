@@ -27,6 +27,7 @@ export default function ScheduleCard({
   );
   const endTime = moment(schedule.dt_fim, "DD/MM/YYYY HH:mm").format("HH:mm");
   const [deleteSchedule, setDeleteSchedule] = useState(false);
+  const [confirmSchedule, setConfirmSchedule] = useState(false);
 
   const handleDeleteSchedule = () => {
     api
@@ -55,8 +56,39 @@ export default function ScheduleCard({
       });
   };
 
+  const handleConfirmSchedule = () => {
+    api
+      .patch(`/atendimentos/${schedule.atendimento_id}/status-atendimento?status=1`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          Alert.alert("Agendamento finalizado com sucesso!");
+          const formatDate = moment(schedule.dt_fim, "DD/MM/YYYY HH:mm").format(
+            "YYYY-MM-DD"
+          );
+          onSearch(formatDate);
+        }
+      })
+      .catch((error) => {
+        Alert.alert(
+          `Erro ${error.response.status}`,
+          "Erro ao finalizar agendamento."
+        );
+      })
+      .finally(() => {
+        closeDeleteSchedule();
+      });
+  };
+
   const closeDeleteSchedule = () => {
     setDeleteSchedule(false);
+  };
+
+  const closeConfirmSchedule = () => {
+    setConfirmSchedule(false);
   };
 
   return (
@@ -88,7 +120,7 @@ export default function ScheduleCard({
             containerStyle={styles.deleteButtonContainer}
             color="transparent"
             buttonStyle={styles.deleteButton}
-            onPress={() => setDeleteSchedule(true)}
+            onPress={() => setConfirmSchedule(true)}
           >
             <IconCheck
               name="checkmark-circle"
@@ -122,6 +154,34 @@ export default function ScheduleCard({
             title="Confirmar"
             titleStyle={{ color: "green" }}
             onPress={handleDeleteSchedule}
+            buttonStyle={{ padding: 0 }}
+          />
+        </View>
+      </Dialog>
+      <Dialog
+        animationType="slide"
+        isVisible={confirmSchedule}
+        onBackdropPress={closeConfirmSchedule}
+        style={{ backgroundColor: "#fff" }}
+      >
+        <Dialog.Title title="Finalizar Atendimento" />
+        <Text>
+          Tem certeza que deseja finalizar o atendimento com{" "}
+          {schedule.nome_completo}?
+        </Text>
+        <View style={styles.dialogActions}>
+          <Button
+            color="transparent"
+            title="Cancelar"
+            titleStyle={{ color: "red" }}
+            onPress={closeConfirmSchedule}
+            buttonStyle={{ padding: 0 }}
+          />
+          <Button
+            color="transparent"
+            title="Confirmar"
+            titleStyle={{ color: "green" }}
+            onPress={handleConfirmSchedule}
             buttonStyle={{ padding: 0 }}
           />
         </View>

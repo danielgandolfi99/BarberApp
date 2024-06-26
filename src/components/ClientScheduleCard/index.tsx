@@ -85,9 +85,9 @@ export default function ClientScheduleCard({
       >
         <View style={styles.cardContent}>
           <View style={styles.textContainer}>
-            <Text style={styles.serviceTitle}>{schedule.servico}</Text>
+            <Text style={styles.serviceTitle}>{schedule.descricao_servico}</Text>
             <Text style={styles.serviceDetails}>
-              Barbeiro: {schedule.barbeiro}
+              Barbeiro: {schedule.nome_barbeiro}
             </Text>
             <Text style={styles.serviceDetails}>
               Data:{" "}
@@ -95,7 +95,7 @@ export default function ClientScheduleCard({
                 .add(3, "hours")
                 .format("DD/MM/YYYY HH:mm")}
             </Text>
-            <Text style={styles.serviceDetails}>Preço: {schedule.valor}</Text>
+            <Text style={styles.serviceDetails}>Preço: R$ {schedule.valor}</Text>
           </View>
           <View style={styles.iconContainer}>
             {schedule.finalizado ? (
