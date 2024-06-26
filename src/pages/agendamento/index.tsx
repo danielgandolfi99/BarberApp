@@ -115,6 +115,11 @@ const PageAgendamento = () => {
         dates.push(date);
       }
     }
+
+    if(new Date().getHours() > 18){
+      dates.shift();
+    }
+
     return dates;
   };
 
