@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/Feather";
+import IconUserEdit from "react-native-vector-icons/FontAwesome5";
 import { useState, useEffect } from "react";
 import { RootState } from "../../services/redux/store";
 import { useNavigation } from "@react-navigation/native";
@@ -20,6 +21,7 @@ import api from "../../services/api";
 import { RegisterServiceProps } from "../../types/services";
 import ServiceCard from "../../components/ServiceCard";
 import { stylesModal } from "../login";
+import moment from "moment";
 
 const TelaInicial = () => {
   const navigation = useNavigation();
@@ -28,6 +30,28 @@ const TelaInicial = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState<RegisterServiceProps[]>([]);
   const [filteredData, setFilteredData] = useState<RegisterServiceProps[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const checkBusinessStatus = () => {
+      const openingTime = moment().set({ hour: 8, minute: 0, second: 0 });
+      const closingTime = moment().set({ hour: 18, minute: 0, second: 0 });
+
+      const today = moment();
+      const isWeekday = today.isoWeekday() >= 1 && today.isoWeekday() <= 6; // segunda a sábado
+
+      if (isWeekday && today.isBetween(openingTime, closingTime)) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    checkBusinessStatus();
+
+    const interval = setInterval(checkBusinessStatus, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleReturn = () => {
     navigation.goBack();
@@ -35,24 +59,24 @@ const TelaInicial = () => {
 
   useEffect(() => {
     // if (isSearching) {
-      api
-        .get("/servicos", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          if (response && response.data) {
-            setData(response.data);
-            setFilteredData(response.data);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          setIsSearching(false);
-        });
+    api
+      .get("/servicos", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response && response.data) {
+          setData(response.data);
+          setFilteredData(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsSearching(false);
+      });
     // }
   }, []);
 
@@ -77,6 +101,10 @@ const TelaInicial = () => {
     Linking.openURL(url);
   };
 
+  const openEdit = () => {
+    navigation.navigate({ name: "Alterar Dados" } as never);
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -89,8 +117,8 @@ const TelaInicial = () => {
           colors={["rgba(47, 50, 67, 0.585)", "rgba(33, 35, 47, 0.765)"]}
           style={styles.gradient}
         />
-        <View style={styles.statusContainer}>
-          <Text style={styles.statusText}>ABERTO</Text>
+        <View style={[styles.statusContainer, isOpen ? styles.openContainer : styles.closedContainer]}>
+          <Text style={styles.statusText}>{isOpen ? "ABERTO" : "FECHADO"}</Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.title}>Salão corte certo</Text>
@@ -107,9 +135,18 @@ const TelaInicial = () => {
             <Icon name="map-pin" size={16} color="#000" />
             <Text style={styles.actionText}>Visitar</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={openEdit}>
+            <IconUserEdit name="user-edit" size={16} color="#000" />
+            <Text style={styles.actionText}>Editar Dados</Text>
+          </TouchableOpacity>
         </View>
         <View>
-          <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate({ name: "Meus Agendamentos" } as never);}}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate({ name: "Meus Agendamentos" } as never);
+            }}
+          >
             <Icon
               name="clock"
               size={12}
@@ -163,10 +200,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 135,
     left: 10,
-    backgroundColor: "#06D6A0",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
+  },
+  openContainer: {
+    backgroundColor: '#06D6A0',
+  },
+  closedContainer: {
+    backgroundColor: '#ff1300',
   },
   statusText: {
     color: "#fff",
