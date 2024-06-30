@@ -45,10 +45,16 @@ const Login = () => {
   useEffect(() => {
     if (search) {
       api
-        .post("/auth", {
-          username: email,
-          password: password,
-        })
+        .post(
+          "/auth",
+          {
+            username: email,
+            password: password,
+          },
+          {
+            timeout: 20000,
+          }
+        )
         .then((response) => {
           if (response && response.data) {
             const { access_token } = response.data;
@@ -59,6 +65,14 @@ const Login = () => {
           }
         })
         .catch((error) => {
+          console.log(error.code)
+          if (error.code === "ERR_NETWORK") {
+            console.log('testeeeeeeeesfaf')
+            Alert.alert(
+              "Erro de Conexão",
+              "Tempo limite de conexão excedido. Verifique sua conexão e tente novamente."
+            );
+          }
           if (error.response.status === 401) {
             setMessage("E-mail ou senha incorreta.");
           }
@@ -104,19 +118,19 @@ const Login = () => {
         "Preencha todos os campos para entrar."
       );
       setMessage("Preencha todos os campos para entrar.");
-    // } else if (!isValidEmail()) {
-    //   Alert.alert(
-    //     "Email Incorreto",
-    //     "Por favor, insira um endereço de e-mail válido."
-    //   );
-    //   setMessage("Por favor, insira um endereço de e-mail válido.");
-    //   return;
-    // } else if (password && password.length < 6) {
-    //   Alert.alert(
-    //     "Senha Fraca",
-    //     "A senha precisa conter pelo menos 6 caracteres."
-    //   );
-    //   setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
+      // } else if (!isValidEmail()) {
+      //   Alert.alert(
+      //     "Email Incorreto",
+      //     "Por favor, insira um endereço de e-mail válido."
+      //   );
+      //   setMessage("Por favor, insira um endereço de e-mail válido.");
+      //   return;
+      // } else if (password && password.length < 6) {
+      //   Alert.alert(
+      //     "Senha Fraca",
+      //     "A senha precisa conter pelo menos 6 caracteres."
+      //   );
+      //   setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
     } else {
       console.log("Email: " + email);
       console.log("Senha: " + password);
