@@ -25,6 +25,7 @@ import { userRegistrationData } from "../../types/user";
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +42,8 @@ const Login = () => {
   //     dispatch(clearToken());
   //   }
   // }, [search]);
+
+  console.log(token);
 
   useEffect(() => {
     if (search) {
@@ -65,9 +68,9 @@ const Login = () => {
           }
         })
         .catch((error) => {
-          console.log(error.code)
+          console.log(error.code);
           if (error.code === "ERR_NETWORK") {
-            console.log('testeeeeeeeesfaf')
+            console.log("testeeeeeeeesfaf");
             Alert.alert(
               "Erro de Conexão",
               "Tempo limite de conexão excedido. Verifique sua conexão e tente novamente."

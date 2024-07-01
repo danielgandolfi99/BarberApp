@@ -1,16 +1,30 @@
 import { Modal, ScrollView, View } from "react-native";
 import Header from "../../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HomeBarberButton from "../../../components/HomeBarberButton";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../services/redux/store";
 import { clearToken } from "../../../services/redux/authSlice";
+import { BackHandler } from "react-native";
 
 const HomeBarbeiros = () => {
   const navigation = useNavigation();
   const username = useSelector((state: RootState) => state.user.name);
+
+  useEffect(() => {
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const handleReturn = () => {
     navigation.goBack();
@@ -48,6 +62,12 @@ const HomeBarbeiros = () => {
           name={"Alterar Dados\nde Cadastro"}
           icon="user-edit"
           navigatePage="Alterar Dados Barbeiro"
+        />
+        <HomeBarberButton
+          name={"Sair"}
+          icon="logout"
+          navigatePage="Login"
+          logout
         />
       </View>
     </View>

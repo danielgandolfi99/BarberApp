@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/Feather";
+import IconExit from "react-native-vector-icons/MaterialIcons";
 import IconUserEdit from "react-native-vector-icons/FontAwesome5";
 import { useState, useEffect } from "react";
 import { RootState } from "../../services/redux/store";
@@ -22,15 +23,39 @@ import { RegisterServiceProps } from "../../types/services";
 import ServiceCard from "../../components/ServiceCard";
 import { stylesModal } from "../login";
 import moment from "moment";
+import { BackHandler } from "react-native";
+import { Button } from "@rneui/base";
+import { clearToken } from "../../services/redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const TelaInicial = () => {
   const navigation = useNavigation();
   const token = useSelector((state: RootState) => state.auth.token);
+  const dispatch = useDispatch();
+
   const [isSearching, setIsSearching] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState<RegisterServiceProps[]>([]);
   const [filteredData, setFilteredData] = useState<RegisterServiceProps[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  const handleLogout = () => {
+    dispatch(clearToken());
+    navigation.navigate({ name: "Login" } as never);
+  };
 
   useEffect(() => {
     const checkBusinessStatus = () => {
@@ -117,12 +142,48 @@ const TelaInicial = () => {
           colors={["rgba(47, 50, 67, 0.585)", "rgba(33, 35, 47, 0.765)"]}
           style={styles.gradient}
         />
-        <View style={[styles.statusContainer, isOpen ? styles.openContainer : styles.closedContainer]}>
+        <View
+          style={[
+            styles.statusContainer,
+            isOpen ? styles.openContainer : styles.closedContainer,
+          ]}
+        >
           <Text style={styles.statusText}>{isOpen ? "ABERTO" : "FECHADO"}</Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.title}>Salão corte certo</Text>
           <Text style={styles.location}>Farroupilha</Text>
+        </View>
+        <View
+          style={{
+            alignItems: "flex-end",
+            justifyContent: "center",
+            padding: 0,
+          }}
+        >
+          <Button
+            color="transparent"
+            title="Sair"
+            iconPosition="right"
+            containerStyle={{
+              borderColor: "#fff",
+              borderWidth: 1,
+              borderRadius: 5,
+              padding: 0,
+              position: "absolute",
+              top: -120,
+              right: 10,
+            }}
+            titleStyle={{
+              color: "#fff",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 10,
+              fontSize: 14,
+            }}
+            icon={<IconExit name="logout" size={20} color="#fff" />}
+            onPress={handleLogout}
+          />
         </View>
       </ImageBackground>
       <View style={styles.actionButtonsContainer}>
@@ -205,10 +266,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   openContainer: {
-    backgroundColor: '#06D6A0',
+    backgroundColor: "#06D6A0",
   },
   closedContainer: {
-    backgroundColor: '#ff1300',
+    backgroundColor: "#ff1300",
   },
   statusText: {
     color: "#fff",
@@ -236,10 +297,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderBottomColor: "#e0e0e0",
   },
+  actionButtonExit: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
+    borderColor: "#fff",
+    marginRight: 20,
+  },
   actionButton: {
     flexDirection: "column",
     alignItems: "center",
     marginRight: 20,
+  },
+  actionTextExit: {
+    marginTop: 5,
+    fontSize: 12,
+    color: "#fff",
   },
   actionText: {
     marginTop: 5,
