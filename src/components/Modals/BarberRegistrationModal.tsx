@@ -40,8 +40,8 @@ export default function BarberRegistrationModal({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [image, setImage] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalCamera, setModalCamera] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
+  // const [modalCamera, setModalCamera] = useState(false);
   const [search, setSearch] = useState(false);
 
   function isValidEmail() {
@@ -86,10 +86,10 @@ export default function BarberRegistrationModal({
   }
 
   const handleSubmit = () => {
-    // const check = checkValidSubmit();
-    // if (check) {
-    setSearch(true);
-    // }
+    const check = checkValidSubmit();
+    if (check) {
+      setSearch(true);
+    }
   };
 
   useEffect(() => {
@@ -207,6 +207,7 @@ export default function BarberRegistrationModal({
               placeholder="Digite seu celular"
               autoCapitalizeNone
               keyboardTypeNumeric
+              phone
             />
             <TextInputStyled
               textName="Senha"

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { userRegistrationData } from "../../types/user";
 
 const initialState: userRegistrationData = {
-  user_id: 0,
+  cliente_id: 0,
   name: "",
   barbeiro_id: null,
 };
@@ -13,12 +13,12 @@ const user = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<userRegistrationData>) {
       const user = action.payload;
-      state.user_id = +user.user_id;
+      state.cliente_id = +user.cliente_id;
       state.name = user.name;
       state.barbeiro_id = user.barbeiro_id && +user.barbeiro_id;
     },
     resetUser(state) {
-      state.user_id = 0;
+      state.cliente_id = 0;
       state.name = '';
       state.barbeiro_id = null;
     },

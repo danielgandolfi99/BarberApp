@@ -59,7 +59,7 @@ const CadastroBarbeiros = () => {
         onNavegatePage={handleReturn}
       />
       <ScrollView style={{ height: "80%" }}>
-        {data &&
+        {data && data.length > 0 &&
           data.map((value, index) => (
             <BarberRegistrationCard
               key={index}

@@ -23,7 +23,11 @@ import RecuperarSenha from "./src/pages/recuperar-senha";
 import CadastroServicos from "./src/pages/gerencial/cadastro-servicos";
 import TelaInicial from "./src/pages/inicio";
 import Relatorios from "./src/pages/relatorios";
-
+import Agendamento from "./src/pages/agendamento";
+import AgendaCliente from "./src/pages/cliente/agendamentos";
+import Agenda from "./src/pages/gerencial/agenda";
+import AlterarDadosCliente from "./src/pages/cliente/alterar-dados";
+import AlterarDadosBarbeiro from "./src/pages/gerencial/alterar-dados";
 
 const Stack = createStackNavigator();
 
@@ -69,9 +73,17 @@ export default function App() {
             />
             <Stack.Screen name="Home Barbeiros" component={HomeBarbeiros} />
             <Stack.Screen name="Recuperar Senha" component={RecuperarSenha} />
-            <Stack.Screen name="Cadastro Servicos" component={CadastroServicos} />
+            <Stack.Screen
+              name="Cadastro Servicos"
+              component={CadastroServicos}
+            />
             <Stack.Screen name="Tela Inicial" component={TelaInicial} />
             <Stack.Screen name="Relatorios" component={Relatorios} />
+            <Stack.Screen name="Agendamento" component={Agendamento} />
+            <Stack.Screen name="Meus Agendamentos" component={AgendaCliente} />
+            <Stack.Screen name="Minha Agenda" component={Agenda} />
+            <Stack.Screen name="Alterar Dados" component={AlterarDadosCliente} />
+            <Stack.Screen name="Alterar Dados Barbeiro" component={AlterarDadosBarbeiro} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

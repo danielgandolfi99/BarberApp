@@ -14,13 +14,18 @@ import { styles } from "../../components/stylesComponents";
 import ButtonStyled from "../../components/ButtonStyled";
 import TextTitleStyled from "../../components/TextTitleStyled";
 import api from "../../services/api";
-import { setToken } from "../../services/redux/authSlice";
+import { clearToken, setToken } from "../../services/redux/authSlice";
 import { useDispatch } from "react-redux";
 import { StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
+import { RootState } from "../../services/redux/store";
+import { setUser } from "../../services/redux/user";
+import { userRegistrationData } from "../../types/user";
 
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,22 +37,45 @@ const Login = () => {
     return emailRegex.test(email);
   }
 
+  // useEffect(() => {
+  //   if (token !== null) {
+  //     dispatch(clearToken());
+  //   }
+  // }, [search]);
+
+  console.log(token);
+
   useEffect(() => {
     if (search) {
       api
-        .post("/auth", {
-          username: email,
-          password: password,
-        })
+        .post(
+          "/auth",
+          {
+            username: email,
+            password: password,
+          },
+          {
+            timeout: 20000,
+          }
+        )
         .then((response) => {
           if (response && response.data) {
             const { access_token } = response.data;
             dispatch(setToken(access_token));
-            
-            navigation.navigate({ name: "Home Barbeiros" } as never);
+            console.log(access_token);
+            handleOpenPage(access_token);
+            // navigation.navigate({ name: "Home Barbeiros" } as never);
           }
         })
         .catch((error) => {
+          console.log(error.code);
+          if (error.code === "ERR_NETWORK") {
+            console.log("testeeeeeeeesfaf");
+            Alert.alert(
+              "Erro de Conexão",
+              "Tempo limite de conexão excedido. Verifique sua conexão e tente novamente."
+            );
+          }
           if (error.response.status === 401) {
             setMessage("E-mail ou senha incorreta.");
           }
@@ -58,31 +86,54 @@ const Login = () => {
     }
   }, [search]);
 
-  // useEffect(() => {
-  //   if (search) {
-  //   }
-  // }, [search]);
+  const handleOpenPage = async (token: string) => {
+    await api
+      .get("/auth/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response && response.data) {
+          const userRegister: userRegistrationData = {
+            cliente_id: response.data.cliente_id,
+            barbeiro_id: response.data.barbeiro_id,
+            name: response.data.name,
+          };
+          console.log(userRegister);
+          console.log("TOKEN: " + token);
+          dispatch(setUser(userRegister));
+          if (response.data.barbeiro_id !== null) {
+            navigation.navigate({ name: "Home Barbeiros" } as never);
+          } else {
+            navigation.navigate({ name: "Tela Inicial" } as never);
+          }
+        }
+      });
+  };
+
+  // console.log(token);
 
   const handleSubmit = () => {
     if (!email || !password) {
-      // Alert.alert(
-      //   "Formulário incompleto!",
-      //   "Preencha todos os campos para entrar."
-      // );
+      Alert.alert(
+        "Formulário incompleto!",
+        "Preencha todos os campos para entrar."
+      );
       setMessage("Preencha todos os campos para entrar.");
       // } else if (!isValidEmail()) {
-      // Alert.alert(
-      //   "Email Incorreto",
-      //   "Por favor, insira um endereço de e-mail válido."
-      // );
-      // setMessage("Por favor, insira um endereço de e-mail válido.");
-      // return;
+      //   Alert.alert(
+      //     "Email Incorreto",
+      //     "Por favor, insira um endereço de e-mail válido."
+      //   );
+      //   setMessage("Por favor, insira um endereço de e-mail válido.");
+      //   return;
       // } else if (password && password.length < 6) {
-      // Alert.alert(
-      //   "Senha Fraca",
-      //   "A senha precisa conter pelo menos 6 caracteres."
-      // );
-      // setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
+      //   Alert.alert(
+      //     "Senha Fraca",
+      //     "A senha precisa conter pelo menos 6 caracteres."
+      //   );
+      //   setMessage("Insira uma senha válida com pelo menos 6 caracteres.");
     } else {
       console.log("Email: " + email);
       console.log("Senha: " + password);
@@ -94,7 +145,7 @@ const Login = () => {
   const handleOpenCadastro = () => {
     navigation.navigate({ name: "Cadastro" } as never);
   };
-  
+
   const handleOpenRecuperarSenha = () => {
     navigation.navigate({ name: "Recuperar Senha" } as never);
   };
@@ -163,7 +214,7 @@ const Login = () => {
       >
         <View style={stylesModal.modalBackground}>
           <View style={stylesModal.activityIndicatorWrapper}>
-            <ActivityIndicator animating={search} size={50}/>
+            <ActivityIndicator animating={search} size={50} />
           </View>
         </View>
       </Modal>
