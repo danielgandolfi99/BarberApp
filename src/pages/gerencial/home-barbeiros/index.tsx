@@ -48,11 +48,7 @@ const HomeBarbeiros = () => {
           icon="cut"
           navigatePage="Cadastro Servicos"
         />
-        <HomeBarberButton
-          name={"Histórico de\nAtendimento"}
-          icon="file"
-          navigatePage="Home Barbeiros"
-        />
+        <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Relatorios" />
         <HomeBarberButton
           name={"Barbeiros"}
           icon="user-alt"
