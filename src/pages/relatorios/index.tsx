@@ -1,12 +1,10 @@
-import { Modal, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, Modal, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useMemo, useState } from "react";
 import Header from "../../components/Header";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
 import DatePicker from "../../components/DatePicker";
 import { Text } from "@rneui/base";
 import ButtonStyled from "../../components/ButtonStyled";
@@ -32,99 +30,33 @@ const Relatorios = () => {
   const token = useSelector((state: RootState) => state.auth.token);
   const [dt_ini, setDt_ini] = useState(subDays(new Date(), 10));
   const [dt_fim, setDt_fim] = useState(new Date());
-
+  const [dados, setDados] = useState<RelatorioDataProps[]>([])
 
   const handleReturn = () => {
     navigation.goBack();
   };
 
   function getData() {
-    // api.get(`/${1}/relatorio?dt_ini=${dt_ini}&dt_fim${dt_fim}&barbeiro=1&servico=2`,
-    //   {
-    //     barber_id: null,
-    //     servicer_id: null,
-    //     start_date: dt_ini,
-    //     end_date: dt_fim
-    //   }, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    // }).then(res => { console.log(res) }).catch(error => console.log(error))
+    api.post<RelatorioDataProps[]>(`/atendimentos`,
+      {
+        barber_id: null,
+        servicer_id: null,
+        start_date: format(dt_ini, 'yyyy-MM-dd'),
+        end_date: format(dt_fim, 'yyyy-MM-dd')
+      }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(res => { setDados(res.data) }).catch(error => console.log(error))
   }
 
 
-  const dados: RelatorioDataProps[] =[
-    {
-      atendimento_id: 6,
-      barbeiro_id: 2,
-      barbeiro: "Barbeiro de teste",
-      cliente_id: 2,
-      cliente: "fulano de tal",
-      titulo: "Corte de cabelo kids",
-      valor: 20.00,
-      descricao: "Corte de cabelo para crianças",
-      data_inicio: "21/06/2024 10:00:00",
-      data_fim: "21/06/2024 11:00:00",
-      finalizado: 1
-    },
-    {
-      atendimento_id: 50,
-      barbeiro_id: 2,
-      barbeiro: "Barbeiro de teste",
-      cliente_id: 20,
-      cliente: "marcos vrielink",
-      titulo: "Corte de cabelo",
-      valor: 25.00,
-      descricao: "Corte de cabelo masculino",
-      data_inicio: "27/06/2024 11:00:00",
-      data_fim: "27/06/2024 12:00:00",
-      finalizado: 1
-    },
-    {
-      atendimento_id: 49,
-      barbeiro_id: 2,
-      barbeiro: "Barbeiro de teste",
-      cliente_id: 20,
-      cliente: "marcos vrielink",
-      titulo: "Corte de cabelo",
-      valor: 25.00,
-      descricao: "Corte de cabelo masculino",
-      data_inicio: "27/06/2024 12:00:00",
-      data_fim: "27/06/2024 13:00:00",
-      finalizado: 1
-    },
-    {
-      atendimento_id: 54,
-      barbeiro_id: 2,
-      barbeiro: "Barbeiro de teste",
-      cliente_id: 20,
-      cliente: "marcos vrielink",
-      titulo: "Corte de cabelo",
-      valor: 25.00,
-      descricao: "Corte de cabelo masculino",
-      data_inicio: "27/06/2024 16:00:00",
-      data_fim: "27/06/2024 17:00:00",
-      finalizado: 1
-    },
-    {
-      atendimento_id: 60,
-      barbeiro_id: 2,
-      barbeiro: "Barbeiro de teste",
-      cliente_id: 19,
-      cliente: "test user",
-      titulo: "Corte de cabelo kids",
-      valor: 20.00,
-      descricao: "Corte de cabelo para crianças",
-      data_inicio: "29/06/2024 13:00:00",
-      data_fim: "29/06/2024 14:00:00",
-      finalizado: 1
-    }
-  ]
+
 
   const total = useMemo(() => {
     let t = 0;
     for (let i = 0; i < dados.length; i++) {
-      t += dados[i].valor;
+      t += Number(dados[i].valor);
     }
     return t
   }, [dados])
@@ -168,7 +100,7 @@ const Relatorios = () => {
   </tbody>
 </table>
 
-    <h3>Valor Total: R$${total}
+    <h3>Valor Total: R$${total.toFixed(2)}
       </body>
 </html>
 `;
@@ -187,7 +119,7 @@ const Relatorios = () => {
         subtitle="Esculpindo estilos, criando obras-primas."
         onNavegatePage={handleReturn}
       />
-      <View style={{ marginTop: 15, alignItems: "center" }}>
+      <View style={{ marginTop: 15, alignItems: "center", width: "100%", padding: 10 }}>
         <View style={styles.dateContainer}>
           <View style={styles.pickerContainer}>
             <Text style={styles.label}>Data inicial</Text>
@@ -198,7 +130,7 @@ const Relatorios = () => {
             <DatePicker handleSelect={(a) => { setDt_fim(a) }} initialValue={new Date()} />
           </View>
         </View>
-        <View style={styles.dateContainer}>
+        {/* <View style={styles.dateContainer}>
           <View style={styles.pickerContainer}>
             <Text style={styles.label}>Barbeiro</Text>
             <Picker style={{ backgroundColor: "#fff" }}>
@@ -211,9 +143,26 @@ const Relatorios = () => {
               <Picker.Item label="Todos" value=' ' />
             </Picker>
           </View>
-        </View>
+        </View> */}
         <ButtonStyled name="Pesquisar" onPress={getData} />
         <ButtonStyled name="Gerar PDF" onPress={geraPDF} />
+        <ScrollView style={{ width: "100%", height: Dimensions.get('window').height / 1.77 }}>
+          {dados.map(item => <><View style={{
+            width: "100%",
+            justifyContent: "space-between",
+            marginBottom: 2,
+            // borderBottomWidth: "1px",
+            // borderBottomColor: "black"
+          }}>
+            <Text style={{ fontWeight: "bold" }}>{item.titulo}</Text>
+            <Text>{item.descricao}</Text>
+            <Text>Data: {item.data_inicio.substring(0, 10)} {item.data_inicio.substring(11, 16)} - {item.data_fim.substring(11, 16)}</Text>
+            <Text>Barbeiro: {item.barbeiro}</Text>
+            <Text>Cliente: {item.cliente}</Text>
+            <Text style={{ textAlign: "right" }}>Valor: R${item.valor}</Text>
+          </View>
+            <View style={{ backgroundColor: "#d2d2d2", height: 2, width: "100%" }}></View></>)}
+        </ScrollView>
       </View>
     </View>
   );

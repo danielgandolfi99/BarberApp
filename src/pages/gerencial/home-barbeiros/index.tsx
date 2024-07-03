@@ -31,7 +31,7 @@ const HomeBarbeiros = () => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
+    <ScrollView style={{ flex: 1 }}>
       <Header
         title={`Olá ${username}`}
         subtitle="Esculpindo estilos, criando obras-primas."
@@ -47,6 +47,11 @@ const HomeBarbeiros = () => {
           name={"Meus\nServiços"}
           icon="cut"
           navigatePage="Cadastro Servicos"
+        />
+        <HomeBarberButton
+          name={"Meus\nClientes"}
+          icon="users"
+          navigatePage="Meus Clientes"
         />
         <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Relatorios" />
         <HomeBarberButton
@@ -66,7 +71,7 @@ const HomeBarbeiros = () => {
           logout
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 export default HomeBarbeiros;
