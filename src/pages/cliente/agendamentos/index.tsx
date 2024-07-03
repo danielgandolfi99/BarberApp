@@ -25,6 +25,9 @@ const AgendaCliente = () => {
     setSearch(true);
   };
 
+  console.log(data)
+  console.log(clienteId)
+
   useEffect(() => {
     if (search) {
       api
@@ -81,6 +84,7 @@ const AgendaCliente = () => {
               key={index}
               schedule={value}
               onScheduleDeleted={handleScheduleDeleted}
+              onSearch={setSearch}
             />
           ))}
       </ScrollView>

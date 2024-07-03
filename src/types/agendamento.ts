@@ -30,4 +30,10 @@ export type AgendaClienteProps = {
   nome_barbeiro: string;
   servico: string;
   descricao_servico: string;
+  avaliacao?: number;
+};
+
+export type AvaliacaoClienteProps = {
+  idAtendimento: number;
+  value: number;
 };
