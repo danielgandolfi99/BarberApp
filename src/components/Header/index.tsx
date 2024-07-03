@@ -8,12 +8,14 @@ interface HeaderProps {
   onNavegatePage: () => void;
   title: string;
   subtitle: string;
+  disabledReturn?: boolean;
 }
 
 export default function Header({
   onNavegatePage,
   title,
   subtitle,
+  disabledReturn,
 }: HeaderProps) {
   return (
     <View style={{ width: "100%", margin: 0 }}>
@@ -30,15 +32,16 @@ export default function Header({
               alignItems: "center",
             }}
           >
-            <Button onPress={onNavegatePage} color="transparent">
-              <Icon
-                name="chevron-left"
-                color="#ffffff"
-                size={20}
-                style={styles.icon}
-              />
-            </Button>
-
+            {!disabledReturn && (
+              <Button onPress={onNavegatePage} color="transparent">
+                <Icon
+                  name="chevron-left"
+                  color="#ffffff"
+                  size={20}
+                  style={styles.icon}
+                />
+              </Button>
+            )}
             <View style={{ flexDirection: "column" }}>
               <Text style={styles.title}>{title}</Text>
               <Text style={styles.subtitle}>{subtitle}</Text>

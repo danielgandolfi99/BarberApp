@@ -116,7 +116,7 @@ const Relatorios = () => {
     <View style={{ flex: 1, alignItems: "center", backgroundColor: "#fff" }}>
       <Header
         title="Relatórios"
-        subtitle="Esculpindo estilos, criando obras-primas."
+        subtitle="Realize a consulta de histórico de atendimento."
         onNavegatePage={handleReturn}
       />
       <View style={{ marginTop: 15, alignItems: "center", width: "100%", padding: 10 }}>

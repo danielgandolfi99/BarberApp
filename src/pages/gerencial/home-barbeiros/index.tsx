@@ -36,6 +36,7 @@ const HomeBarbeiros = () => {
         title={`Olá ${username}`}
         subtitle="Esculpindo estilos, criando obras-primas."
         onNavegatePage={handleReturn}
+        disabledReturn
       />
       <View style={{ marginTop: 15 }}>
         <HomeBarberButton

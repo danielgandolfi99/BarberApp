@@ -55,7 +55,7 @@ export default function BarberRegistrationCard({
 const styles = StyleSheet.create({
   container: {
     height: 80,
-    width: 309,
+    width: "90%",
     borderRadius: 10,
     borderColor: "#9D4EDD",
     backgroundColor: "#9D4EDD",
