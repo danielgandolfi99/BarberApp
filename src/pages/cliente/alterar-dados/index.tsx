@@ -17,55 +17,54 @@ import TextInputStyled from "../../../components/TextInputStyled";
 import { stylesModal } from "../../login";
 import ButtonStyled from "../../../components/ButtonStyled";
 import Header from "../../../components/Header";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../services/redux/store";
 
-const AlterarDados = () => {
+const AlterarDadosCliente = () => {
   const navigation = useNavigation();
+  const token = useSelector((state: RootState) => state.auth.token);
+  const userId = useSelector((state: RootState) => state.user.user_id);
 
   const [nome, setNome] = useState("");
   const [sobrenome, setSobrenome] = useState("");
   const [celular, setCelular] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [search, setSearch] = useState(false);
 
-  //   useEffect(() => {
-  //     if (search) {
-  //     //   const newRegister: RegisterUserProps = {
-  //     //     name: nome,
-  //     //     surname: sobrenome,
-  //     //     phone: celular,
-  //     //     email: email,
-  //     //     password: password,
-  //     //   };
-  //       api
-  //         .post("/users", newRegister)
-  //         .then((response) => {
-  //           if (response) {
-  //             Alert.alert(
-  //               "Cadastro concluido com sucesso!",
-  //               "Efetue o login para acessar sua conta."
-  //             );
-  //             navigation.navigate({ name: "Login" } as never);
-  //           }
-  //         })
-  //         .catch((error) => {
-  //           Alert.alert(
-  //             `Erro ${error.response.status}`,
-  //             "Erro ao realizar cadastro."
-  //           );
-  //           console.log(error);
-  //         })
-  //         .finally(() => {
-  //           setSearch(false);
-  //         });
-  //     }
-  //   }, [search]);
-
-  function isValidEmail() {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
+  const handleUpdateUser = () => {
+    setSearch(true);
+    if (search) {
+    const updateRegister = {
+      nome: nome ? nome : null,
+      sobrenome: sobrenome ? sobrenome : null,
+      celular: celular ? celular : null,
+      senha: password ? password : null,
+    };
+      api
+        .patch(`/users/${userId}`, updateRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log(response)
+          if (response.status === 200) {
+            Alert.alert("Dados alterados com sucesso!");
+            navigation.navigate({ name: "Tela Inicial" } as never);
+          }
+        })
+        .catch((error) => {
+          Alert.alert(
+            `Erro ${error.response.status}`,
+            "Erro ao alterar dados de cadastro."
+          );
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    }
+  };
 
   function isValidCelular() {
     const celularRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
@@ -82,19 +81,16 @@ const AlterarDados = () => {
       Alert.alert("Senhas Incompatíveis", "As senhas não conferem!");
       return;
     }
-    if (!nome || !sobrenome || !celular || !email || !password) {
-      Alert.alert("Formulário incompleto", "Preencha todos os campos!");
+    if (!nome && !sobrenome && !celular && !password) {
+      Alert.alert(
+        "Formulário incompleto",
+        "Preencha pelo menos um campo para alterar!"
+      );
       return;
-    } else if (!isValidCelular()) {
+    } else if (celular && !isValidCelular()) {
       Alert.alert(
         "Número de celular inválido",
         "Por favor, insira um número de celular válido."
-      );
-      return;
-    } else if (!isValidEmail()) {
-      Alert.alert(
-        "Email Incorreto",
-        "Por favor, insira um endereço de e-mail válido."
       );
       return;
     } else if (password && password.length < 6) {
@@ -104,7 +100,7 @@ const AlterarDados = () => {
       );
       return;
     } else {
-      setSearch(true);
+      handleUpdateUser();
     }
   }
 
@@ -120,8 +116,6 @@ const AlterarDados = () => {
         onNavegatePage={goBack}
       />
       <ScrollView>
-        {/* <TextTitleStyled />
-      <TextSubtitleStyled /> */}
         <View style={stylesPage.row}>
           <TextInputStyled
             textName="Nome"
@@ -145,13 +139,6 @@ const AlterarDados = () => {
             autoCapitalizeNone
             keyboardTypeNumeric
             phone
-          />
-          <TextInputStyled
-            textName="E-mail"
-            value={email}
-            setValue={setEmail}
-            placeholder="Digite seu e-mail"
-            autoCapitalizeNone
           />
           <TextInputStyled
             textName="Senha"
@@ -203,7 +190,7 @@ const AlterarDados = () => {
     </View>
   );
 };
-export default AlterarDados;
+export default AlterarDadosCliente;
 
 const stylesPage = StyleSheet.create({
   container: {

@@ -82,7 +82,6 @@ export default function BarberRegistrationCard({
   }, [search]);
 
   const handleUpdateImage = async () => {
-    console.log(image)
     if (image) {
       try {
         const formData = new FormData();
