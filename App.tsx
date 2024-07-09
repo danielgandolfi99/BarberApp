@@ -29,6 +29,7 @@ import Agenda from "./src/pages/gerencial/agenda";
 import AlterarDadosCliente from "./src/pages/cliente/alterar-dados";
 import AlterarDadosBarbeiro from "./src/pages/gerencial/alterar-dados";
 import MyClients from "./src/pages/cliente/clientes/clientes";
+import ConfirmarConta from "./src/pages/confirmar-conta";
 
 const Stack = createStackNavigator();
 
@@ -86,6 +87,7 @@ export default function App() {
             <Stack.Screen name="Minha Agenda" component={Agenda} />
             <Stack.Screen name="Alterar Dados" component={AlterarDadosCliente} />
             <Stack.Screen name="Alterar Dados Barbeiro" component={AlterarDadosBarbeiro} />
+            <Stack.Screen name="Confirmar Conta" component={ConfirmarConta} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

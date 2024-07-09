@@ -70,7 +70,6 @@ const Login = () => {
         .catch((error) => {
           console.log(error.code);
           if (error.code === "ERR_NETWORK") {
-            console.log("testeeeeeeeesfaf");
             Alert.alert(
               "Erro de Conexão",
               "Tempo limite de conexão excedido. Verifique sua conexão e tente novamente."
@@ -99,11 +98,17 @@ const Login = () => {
             cliente_id: response.data.cliente_id,
             barbeiro_id: response.data.barbeiro_id,
             name: response.data.name,
+            user_id: response.data.user_id,
+            username: response.data.username,
+            ativo: response.data.ativo,
+            verificador: response.data.verificador,
           };
           console.log(userRegister);
           console.log("TOKEN: " + token);
           dispatch(setUser(userRegister));
-          if (response.data.barbeiro_id !== null) {
+          if (!response.data.ativo) {
+            navigation.navigate({ name: "Confirmar Conta" } as never);
+          } else if (response.data.barbeiro_id !== null) {
             navigation.navigate({ name: "Home Barbeiros" } as never);
           } else {
             navigation.navigate({ name: "Tela Inicial" } as never);
@@ -111,8 +116,6 @@ const Login = () => {
         }
       });
   };
-
-  // console.log(token);
 
   const handleSubmit = () => {
     if (!email || !password) {

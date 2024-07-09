@@ -14,5 +14,9 @@ export type RegisterUserProps = {
 export type userRegistrationData = {
   cliente_id: number;
   barbeiro_id: number | null;
+  user_id: number;
+  username: string;
   name: string;
+  ativo: number;
+  verificador: string;
 };
