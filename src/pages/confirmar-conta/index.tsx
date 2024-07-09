@@ -45,11 +45,7 @@ const ConfirmarConta = () => {
         )
         .then((response) => {
           if (response.status === 200) {
-            if (barbeiroId !== null) {
-              navigation.navigate({ name: "Home Barbeiros" } as never);
-            } else {
-              navigation.navigate({ name: "Tela Inicial" } as never);
-            }
+            navigation.navigate({ name: "Tela Inicial" } as never);
           }
         })
         .catch((error) => {

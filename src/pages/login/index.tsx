@@ -106,10 +106,10 @@ const Login = () => {
           console.log(userRegister);
           console.log("TOKEN: " + token);
           dispatch(setUser(userRegister));
-          if (!response.data.ativo) {
-            navigation.navigate({ name: "Confirmar Conta" } as never);
-          } else if (response.data.barbeiro_id !== null) {
+          if (response.data.barbeiro_id !== null) {
             navigation.navigate({ name: "Home Barbeiros" } as never);
+          } else if (!response.data.ativo) {
+            navigation.navigate({ name: "Confirmar Conta" } as never);
           } else {
             navigation.navigate({ name: "Tela Inicial" } as never);
           }

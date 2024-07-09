@@ -49,8 +49,8 @@ const RecuperarSenha = () => {
             );
           } else {
             Alert.alert(
-              "Erro ao alterar email",
-              "Email não cadastrado no aplicativo.",
+              `Erro ${response.status}`,
+              "Erro ao alterar email.",
               [{ text: "OK", onPress: goBack }]
             );
           }

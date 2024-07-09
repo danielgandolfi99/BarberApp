@@ -12,6 +12,7 @@ import { BackHandler } from "react-native";
 const HomeBarbeiros = () => {
   const navigation = useNavigation();
   const username = useSelector((state: RootState) => state.user.name);
+  const barbeiroId = useSelector((state: RootState) => state.user.barbeiro_id);
 
   useEffect(() => {
     const backAction = () => {
@@ -54,12 +55,18 @@ const HomeBarbeiros = () => {
           icon="users"
           navigatePage="Meus Clientes"
         />
-        <HomeBarberButton name={"Histórico de\nAtendimento"} icon="file" navigatePage="Relatorios" />
         <HomeBarberButton
-          name={"Barbeiros"}
-          icon="user-alt"
-          navigatePage="Cadastro Barbeiros"
+          name={"Histórico de\nAtendimento"}
+          icon="file"
+          navigatePage="Relatorios"
         />
+        {barbeiroId === 32 && (
+          <HomeBarberButton
+            name={"Barbeiros"}
+            icon="user-alt"
+            navigatePage="Cadastro Barbeiros"
+          />
+        )}
         <HomeBarberButton
           name={"Alterar Dados\nde Cadastro"}
           icon="user-edit"

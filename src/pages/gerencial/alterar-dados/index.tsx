@@ -1,11 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
-import { Button } from "@rneui/base";
+import { Button, Dialog } from "@rneui/base";
 import { useEffect, useState } from "react";
 import {
   View,
   Alert,
   TouchableOpacity,
   Text,
+  Image,
   Modal,
   ActivityIndicator,
   StyleSheet,
@@ -19,6 +20,9 @@ import ButtonStyled from "../../../components/ButtonStyled";
 import Header from "../../../components/Header";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../services/redux/store";
+import { Avatar } from "@rneui/themed";
+import CameraSendImageModal from "../../../components/Modals/CameraSendImageModal";
+import * as ImagePicker from "expo-image-picker";
 
 const AlterarDadosBarbeiro = () => {
   const navigation = useNavigation();
@@ -30,39 +34,105 @@ const AlterarDadosBarbeiro = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [search, setSearch] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalCamera, setModalCamera] = useState(false);
 
-  const handleUpdateBarbeiro = () => {
-    setSearch(true);
-    if (search) {
-      const updateRegister = {
-        nome: nome ? nome : null,
-        celular: celular ? celular : null,
-        senha: password ? password : null,
-        imagem: null
-      };
-      api
-        .patch(`/barbeiros/${barbeiroId}`, updateRegister, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.status === 200) {
-            Alert.alert("Dados alterados com sucesso!");
-            navigation.navigate({ name: "Home Barbeiros" } as never);
+  useEffect(() => {
+    api
+      .get(`/barbeiros/${barbeiroId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response && response.data) {
+          setNome(response.data.nome);
+          setCelular(response.data.celular);
+          if (response.data.imagem) {
+            const imageBase64 = response.data.imagem.data.reduce(
+              (data: string, byte: number) => {
+                return data + String.fromCharCode(byte);
+              },
+              ""
+            );
+
+            setImage(`data:image/png;base64,${btoa(imageBase64)}`);
           }
-        })
-        .catch((error) => {
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const handleUpdateImage = async () => {
+    if (image) {
+      try {
+        const formData = new FormData();
+
+        const fileType = image.split('.').pop();
+        const fileUri = image.startsWith('file://') ? image : 'file://' + image;
+
+
+        formData.append("imagem", {
+          uri: fileUri,
+          name: `image.${fileType}`,
+          type: `image/${fileType}`,
+        } as any);
+
+        const response = await api.patch(
+          `/barbeiros/${barbeiroId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          Alert.alert("Barbeiro alterado com sucesso!");
+        } else {
           Alert.alert(
-            `Erro ${error.response.status}`,
-            "Erro ao alterar dados de cadastro."
+            "Erro ao alterar o barbeiro. Por favor, tente novamente."
           );
-        })
-        .finally(() => {
-          setSearch(false);
-        });
+        }
+      } catch (error) {
+        Alert.alert("Erro ao alterar o barbeiro. Por favor, tente novamente.");
+        console.log(error)
+      } finally {
+        setSearch(false);
+      }
     }
+  };
+
+  const handleUpdateBarbeiro = async () => {
+    const updateRegister = {
+      nome: nome ? nome : null,
+      celular: celular ? celular : null,
+      senha: password ? password : null,
+      imagem: null,
+    };
+    await api
+      .patch(`/barbeiros/${barbeiroId}`, updateRegister, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          Alert.alert("Dados alterados com sucesso!");
+          navigation.navigate({ name: "Home Barbeiros" } as never);
+        }
+      })
+      .catch((error) => {
+        Alert.alert(
+          `Erro ${error.response.status}`,
+          "Erro ao alterar dados de cadastro."
+        );
+      });
   };
 
   function isValidCelular() {
@@ -107,6 +177,34 @@ const AlterarDadosBarbeiro = () => {
     navigation.goBack();
   };
 
+  const pickImageFromGallery = async () => {
+    setShowModal(false);
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("O aplicativo não possui permissão para utilizar a câmera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      const selectedImage = result.assets[0];
+      setImage(selectedImage.uri);
+      setSearch(true);
+    }
+  };
+
+  useEffect(() => {
+    if (search) {
+      handleUpdateImage();
+    }
+  }, [search]);
+
   return (
     <View style={stylesPage.container}>
       <Header
@@ -115,9 +213,15 @@ const AlterarDadosBarbeiro = () => {
         onNavegatePage={goBack}
       />
       <ScrollView>
-        {/* <TextTitleStyled />
-      <TextSubtitleStyled /> */}
         <View style={stylesPage.row}>
+          <Button onPress={() => setShowModal(true)} color="transparent">
+            <Avatar
+              size={120}
+              rounded
+              containerStyle={{ backgroundColor: "#D9D9D9" }}
+              source={{ uri: image || " " }}
+            />
+          </Button>
           <TextInputStyled
             textName="Nome"
             value={nome}
@@ -169,6 +273,55 @@ const AlterarDadosBarbeiro = () => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      <Dialog
+        animationType="slide"
+        transparent={true}
+        isVisible={showModal}
+        onBackdropPress={() => setShowModal(false)}
+      >
+        <View
+          style={{
+            backgroundColor: "#fff",
+            padding: 10,
+            borderRadius: 10,
+            width: "100%",
+          }}
+        >
+          <Image
+            style={{
+              flex: 1,
+              resizeMode: "contain",
+              height: 300,
+              width: "100%",
+            }}
+            source={{ uri: image || "" }}
+          />
+          <View style={{ marginBottom: 15 }}>
+            <Button
+              title="Abrir Camera"
+              color="#9D4EDD"
+              onPress={() => {
+                setModalCamera(true);
+                setShowModal(false);
+              }}
+            />
+          </View>
+          <View style={{ marginBottom: 0 }}>
+            <Button
+              title="Abrir Galeria"
+              color="#9D4EDD"
+              onPress={pickImageFromGallery}
+            />
+          </View>
+        </View>
+      </Dialog>
+      <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
+        <CameraSendImageModal
+          onClose={setModalCamera}
+          onUpdateImage={handleUpdateImage}
+          onSetImage={setImage}
+        />
+      </Modal>
       <Modal
         transparent={true}
         animationType="none"
