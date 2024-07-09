@@ -10,6 +10,7 @@ import { Text } from "@rneui/base";
 import ButtonStyled from "../../components/ButtonStyled";
 import * as Print from 'expo-print';
 import { format, subDays } from "date-fns";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface RelatorioDataProps {
   atendimento_id: number,
@@ -30,7 +31,7 @@ const Relatorios = () => {
   const token = useSelector((state: RootState) => state.auth.token);
   const [dt_ini, setDt_ini] = useState(subDays(new Date(), 10));
   const [dt_fim, setDt_fim] = useState(new Date());
-  const [dados, setDados] = useState<RelatorioDataProps[]>([])
+  const [dados, setDados] = useState<RelatorioDataProps[]>([]);
 
   const handleReturn = () => {
     navigation.goBack();
@@ -49,9 +50,6 @@ const Relatorios = () => {
       },
     }).then(res => { setDados(res.data) }).catch(error => console.log(error))
   }
-
-
-
 
   const total = useMemo(() => {
     let t = 0;
@@ -116,52 +114,68 @@ const Relatorios = () => {
     <View style={{ flex: 1, alignItems: "center", backgroundColor: "#fff" }}>
       <Header
         title="Relatórios"
-        subtitle="Realize a consulta de histórico de atendimento."
+        subtitle="Esculpindo estilos, criando obras-primas."
         onNavegatePage={handleReturn}
       />
-      <View style={{ marginTop: 15, alignItems: "center", width: "100%", padding: 10 }}>
-        <View style={styles.dateContainer}>
-          <View style={styles.pickerContainer}>
-            <Text style={styles.label}>Data inicial</Text>
-            <DatePicker handleSelect={(a) => { setDt_ini(a) }} initialValue={new Date()} />
-          </View>
-          <View style={styles.pickerContainer}>
-            <Text style={styles.label}>Data final</Text>
-            <DatePicker handleSelect={(a) => { setDt_fim(a) }} initialValue={new Date()} />
-          </View>
+      <View style={{ alignItems: "center", width: "100%" }}>
+        <View style={{alignItems: "center"}}>
+          <LinearGradient
+            colors={["rgba(34,29,37,1)", "rgba(123,44,191,1)"]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.gradient}
+          >
+            <View style={styles.dateContainer}>
+              <View style={styles.pickerContainer}>
+                <Text style={styles.label}>Data inicial</Text>
+                <DatePicker handleSelect={(a) => { setDt_ini(a) }} initialValue={new Date()} />
+              </View>
+              <View style={styles.pickerContainer}>
+                <Text style={styles.label}>Data final</Text>
+                <DatePicker handleSelect={(a) => { setDt_fim(a) }} initialValue={new Date()} />
+              </View>
+            </View>
+            {/* <View style={styles.dateContainer}>
+              <View style={styles.pickerContainer}>
+                <Text style={styles.label}>Barbeiro</Text>
+                <Picker style={{ backgroundColor: "#fff" }}>
+                  <Picker.Item label="Todos" value=' ' />
+                </Picker>
+              </View>
+              <View style={styles.pickerContainer}>
+                <Text style={styles.label}>Serviço</Text>
+                <Picker style={{ backgroundColor: "#fff" }}>
+                  <Picker.Item label="Todos" value=' ' />
+                </Picker>
+              </View>
+            </View> */}
+            <ButtonStyled name="Pesquisar" onPress={getData} />
+            <ButtonStyled name="Gerar PDF" onPress={geraPDF} />
+          </LinearGradient>
         </View>
-        {/* <View style={styles.dateContainer}>
-          <View style={styles.pickerContainer}>
-            <Text style={styles.label}>Barbeiro</Text>
-            <Picker style={{ backgroundColor: "#fff" }}>
-              <Picker.Item label="Todos" value=' ' />
-            </Picker>
-          </View>
-          <View style={styles.pickerContainer}>
-            <Text style={styles.label}>Serviço</Text>
-            <Picker style={{ backgroundColor: "#fff" }}>
-              <Picker.Item label="Todos" value=' ' />
-            </Picker>
-          </View>
-        </View> */}
-        <ButtonStyled name="Pesquisar" onPress={getData} />
-        <ButtonStyled name="Gerar PDF" onPress={geraPDF} />
         <ScrollView style={{ width: "100%", height: Dimensions.get('window').height / 1.77 }}>
-          {dados.map(item => <><View style={{
-            width: "100%",
-            justifyContent: "space-between",
-            marginBottom: 2,
-            // borderBottomWidth: "1px",
-            // borderBottomColor: "black"
-          }}>
-            <Text style={{ fontWeight: "bold" }}>{item.titulo}</Text>
-            <Text>{item.descricao}</Text>
-            <Text>Data: {item.data_inicio.substring(0, 10)} {item.data_inicio.substring(11, 16)} - {item.data_fim.substring(11, 16)}</Text>
-            <Text>Barbeiro: {item.barbeiro}</Text>
-            <Text>Cliente: {item.cliente}</Text>
-            <Text style={{ textAlign: "right" }}>Valor: R${item.valor}</Text>
-          </View>
-            <View style={{ backgroundColor: "#d2d2d2", height: 2, width: "100%" }}></View></>)}
+          {dados.map((item, index) => (
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardTitle}>{item.titulo}</Text>
+              <Text style={styles.cardDescription}>{item.descricao}</Text>
+              <Text style={styles.cardText}>
+                <Text style={styles.boldText}>Data: </Text>
+                {item.data_inicio.substring(0, 10)} {item.data_inicio.substring(11, 16)} - {item.data_fim.substring(11, 16)}
+              </Text>
+              {/* <Text style={styles.cardText}>
+                <Text style={styles.boldText}>Barbeiro: </Text>
+                {item.barbeiro}
+              </Text> */}
+              <Text style={styles.cardText}>
+                <Text style={styles.boldText}>Cliente: </Text>
+                {item.cliente}
+              </Text>
+              <Text style={styles.cardText}>
+                <Text style={styles.boldText}>Valor: </Text>
+                R${item.valor}
+              </Text>
+            </View>
+          ))}
         </ScrollView>
       </View>
     </View>
@@ -170,9 +184,16 @@ const Relatorios = () => {
 export default Relatorios;
 
 const styles = StyleSheet.create({
-  label: {
+  title: {
+    fontSize: 14,
+    marginTop: 20,
     color: '#fff',
-    fontWeight: 700
+    fontWeight: "900"
+  },
+  label: {
+    marginTop: 20,
+    color: '#fff',
+    fontWeight: "700"
   },
   dateContainer: {
     flexDirection: 'row',
@@ -182,5 +203,40 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     width: '48%'
+  },
+  gradient: {
+    alignItems: "center",
+    width: "100%",
+  },
+  card: {
+    backgroundColor: "#9D4EDD",
+    padding: 10,
+    marginBottom: 5,
+    margin: 10,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    color: "#fff"
+  },
+  cardTitle: {
+    fontFamily: "Montserrat_700Bold",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff"
+  },
+  cardDescription: {
+    fontFamily: "Montserrat_400Regular",
+    fontSize: 14,
+    color: "#fff",
+    marginBottom: 6
+  },
+  cardText: {
+    fontSize: 14,
+    marginBottom: 2,
+    color: "#fff",
+    fontFamily: "Montserrat_400Regular",
+  },
+  boldText: {
+    fontFamily: "Montserrat_700Bold",
+    color: "#fff",
   }
-})
+});

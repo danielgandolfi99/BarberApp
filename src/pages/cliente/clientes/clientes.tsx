@@ -5,7 +5,7 @@ import { RootState } from "../../../services/redux/store";
 import { Dimensions, Linking, ScrollView, View } from "react-native";
 import Header from "../../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import { Button, Icon } from "@rneui/base";
 import { formatPhone } from "../../../utils/formatPhone";
 
@@ -21,6 +21,7 @@ export default function MyClients(): JSX.Element {
     const token = useSelector((state: RootState) => state.auth.token);
 
     const [clientes, setClientes] = useState<ClienteProps[]>([])
+
     async function getClients() {
         api.get<ClienteProps[]>(`/barbeiros/${user.barbeiro_id}/clientes`, {
             headers: {
@@ -46,40 +47,74 @@ export default function MyClients(): JSX.Element {
 
     return (
         <View style={{ flex: 1, alignItems: "center", backgroundColor: "#fff" }}>
-            <Header
-                title="Meus clientes"
-                subtitle="Os clientes que confiaram no seu serviço"
-                onNavegatePage={handleReturn}
-            />
+        <Header
+            title="Meus clientes"
+            subtitle="Os clientes que confiaram no seu serviço"
+            onNavegatePage={handleReturn}
+        />
 
-            <View style={{ alignItems: "center", width: "100%", padding: 10 }}>
-
-                {clientes.map((item, i) => {
-                    console.log(item)
-                    return (
-                        <>
-                            <View style={{ width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 5 }} key={i} >
-                                <View style={{ flexDirection: "column" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 18 }}>Cliente: {item.nome} {item.sobrenome}</Text>
-                                    <Text>Email: {item.email}</Text>
-                                    <Text>Fone: {formatPhone({phone:item.celular})}</Text>
-                                    <Text>Nº atendimentos: {item.atendimentos}</Text>
-                                    <Text>Último atendimento{item.ult_atendimento}</Text>
-                                </View>
-                                <View style={{ flexDirection: "row" }}>
-                                    <Button containerStyle={{ width: 50 }} type="clear"><Icon type="entypo" name="phone" onPress={() => { Linking.openURL(`tel:${item.celular}`); }} /></Button>
-                                    <Button containerStyle={{ width: 50 }} type="clear"><Icon type="fontisto" name="email" onPress={() => { Linking.openURL(`mailto:${item.email}`) }} /></Button>
-                                </View>
-                            </View>
-                            <View style={{ backgroundColor: "#d2d2d2", height: 2, width: "100%" }}></View></>
-                    )
-
-                }
-
-                )
-                }
-
-            </View>
-        </View >
-    )
+        <View style={{ alignItems: "center", width: "100%", padding: 10 }}>
+            {clientes.map((item, i) => {
+            return (
+                <View key={i} style={styles.card}>
+                <Text style={styles.cardTitle}>
+                    {item.nome} {item.sobrenome}
+                </Text>
+                <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
+                    <View>
+                    <Text style={styles.cardText}><Text style={styles.boldText}>Telefone:</Text> {formatPhone({ phone: item.celular })}</Text>
+                    <Text style={styles.cardText}><Text style={styles.boldText}>E-mail:</Text> {item.email}</Text>
+                    <Text style={styles.cardText}>
+                        <Text style={styles.boldText}>Serviços realizados:</Text> {item.atendimentos}
+                    </Text>
+                    <Text style={styles.cardText}>
+                        <Text style={styles.boldText}>Data ult. Serviço:</Text> {item.ult_atendimento}
+                    </Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                    <Button containerStyle={{ width: 50 }} type="clear">
+                        <Icon type="entypo" name="phone" color="#fff" onPress={() => { Linking.openURL(`tel:${item.celular}`); }} />
+                    </Button>
+                    <Button containerStyle={{ width: 50 }} type="clear">
+                        <Icon type="fontisto" name="email" color="#fff" onPress={() => { Linking.openURL(`mailto:${item.email}`) }} />
+                    </Button>
+                    </View>
+                </View>
+                </View>
+            );
+            })}
+        </View>
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    width: '95%',
+    height: 130,
+    backgroundColor: "#9D4EDD",
+    marginBottom: 10,
+    color: "#fff",
+    padding: 10,
+  },
+  cardTitle: {
+    fontFamily: "Montserrat",
+    fontSize: 16,
+    fontWeight: "700",
+    textAlign: "left",
+    color: "#fff",
+    marginBottom: 5
+  },
+  cardText: {
+    fontFamily: "Montserrat",
+    fontSize: 14,
+    textAlign: "left",
+    color: "#fff",
+    marginBottom: 2,
+  },
+  boldText: {
+    fontFamily: "Montserrat",
+    fontWeight: "700",
+    color: "#fff",
+  },
+});
