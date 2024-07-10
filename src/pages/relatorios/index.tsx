@@ -8,26 +8,27 @@ import { RootState } from "../../services/redux/store";
 import DatePicker from "../../components/DatePicker";
 import { Text } from "@rneui/base";
 import ButtonStyled from "../../components/ButtonStyled";
-import * as Print from 'expo-print';
+import * as Print from "expo-print";
 import { format, subDays } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface RelatorioDataProps {
-  atendimento_id: number,
-  barbeiro_id: number,
-  barbeiro: string,
-  cliente_id: number,
-  cliente: string,
-  titulo: string,
-  descricao: string,
-  data_inicio: string,
-  data_fim: string,
-  finalizado: number
-  valor: number
+  atendimento_id: number;
+  barbeiro_id: number;
+  barbeiro: string;
+  cliente_id: number;
+  cliente: string;
+  titulo: string;
+  descricao: string;
+  data_inicio: string;
+  data_fim: string;
+  finalizado: number;
+  valor: number;
 }
 
 const Relatorios = () => {
   const navigation = useNavigation();
+  const barbeiroId = useSelector((state: RootState) => state.user.barbeiro_id);
   const token = useSelector((state: RootState) => state.auth.token);
   const [dt_ini, setDt_ini] = useState(subDays(new Date(), 10));
   const [dt_fim, setDt_fim] = useState(new Date());
@@ -38,17 +39,25 @@ const Relatorios = () => {
   };
 
   function getData() {
-    api.post<RelatorioDataProps[]>(`/atendimentos`,
-      {
-        barber_id: null,
-        servicer_id: null,
-        start_date: format(dt_ini, 'yyyy-MM-dd'),
-        end_date: format(dt_fim, 'yyyy-MM-dd')
-      }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(res => { setDados(res.data) }).catch(error => console.log(error))
+    api
+      .post<RelatorioDataProps[]>(
+        `/atendimentos`,
+        {
+          barber_id: barbeiroId,
+          servicer_id: null,
+          start_date: format(dt_ini, "yyyy-MM-dd"),
+          end_date: format(dt_fim, "yyyy-MM-dd"),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        setDados(res.data);
+      })
+      .catch((error) => console.log(error));
   }
 
   const total = useMemo(() => {
@@ -56,12 +65,10 @@ const Relatorios = () => {
     for (let i = 0; i < dados.length; i++) {
       t += Number(dados[i].valor);
     }
-    return t
-  }, [dados])
-
+    return t;
+  }, [dados]);
 
   async function geraPDF() {
-
     const html = `
 <html>
   <head>
@@ -69,7 +76,10 @@ const Relatorios = () => {
   </head>
   <body style="text-align: center;">
     <h2 style="font-size: 30px; font-family: Helvetica Neue; font-weight: normal;">
-      Relatório de atendimentos ${format(dt_ini, 'dd/MM/yyyy')} à ${format(dt_fim, 'dd/MM/yyyy')}
+      Relatório de atendimentos ${format(dt_ini, "dd/MM/yyyy")} à ${format(
+      dt_fim,
+      "dd/MM/yyyy"
+    )}
     </h2>
     <table style="width: 100%; border-collapse: collapse; border: 1px solid black;">
   <thead>
@@ -84,7 +94,9 @@ const Relatorios = () => {
     </tr>
   </thead>
   <tbody>
-    ${dados.map(item => `
+    ${dados
+      .map(
+        (item) => `
       <tr>
         <td style="border: 1px solid black;">${item.barbeiro}</td>
         <td style="border: 1px solid black;">${item.cliente}</td>
@@ -94,7 +106,9 @@ const Relatorios = () => {
         <td style="border: 1px solid black;">${item.data_fim}</td>
         <td style="border: 1px solid black; white-space: nowrap;">${item.valor}</td>
       </tr>
-    `).join('')}
+    `
+      )
+      .join("")}
   </tbody>
 </table>
 
@@ -103,12 +117,10 @@ const Relatorios = () => {
 </html>
 `;
 
-
     await Print.printAsync({
-      html
+      html,
     });
   }
-
 
   return (
     <View style={{ flex: 1, alignItems: "center", backgroundColor: "#fff" }}>
@@ -118,7 +130,7 @@ const Relatorios = () => {
         onNavegatePage={handleReturn}
       />
       <View style={{ alignItems: "center", width: "100%" }}>
-        <View style={{alignItems: "center"}}>
+        <View style={{ alignItems: "center" }}>
           <LinearGradient
             colors={["rgba(34,29,37,1)", "rgba(123,44,191,1)"]}
             start={{ x: 0, y: 0.5 }}
@@ -128,44 +140,43 @@ const Relatorios = () => {
             <View style={styles.dateContainer}>
               <View style={styles.pickerContainer}>
                 <Text style={styles.label}>Data inicial</Text>
-                <DatePicker handleSelect={(a) => { setDt_ini(a) }} initialValue={new Date()} />
+                <DatePicker
+                  handleSelect={(a) => {
+                    setDt_ini(a);
+                  }}
+                  initialValue={dt_ini}
+                />
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.label}>Data final</Text>
-                <DatePicker handleSelect={(a) => { setDt_fim(a) }} initialValue={new Date()} />
+                <DatePicker
+                  handleSelect={(a) => {
+                    setDt_fim(a);
+                  }}
+                  initialValue={dt_fim}
+                />
               </View>
             </View>
-            {/* <View style={styles.dateContainer}>
-              <View style={styles.pickerContainer}>
-                <Text style={styles.label}>Barbeiro</Text>
-                <Picker style={{ backgroundColor: "#fff" }}>
-                  <Picker.Item label="Todos" value=' ' />
-                </Picker>
-              </View>
-              <View style={styles.pickerContainer}>
-                <Text style={styles.label}>Serviço</Text>
-                <Picker style={{ backgroundColor: "#fff" }}>
-                  <Picker.Item label="Todos" value=' ' />
-                </Picker>
-              </View>
-            </View> */}
             <ButtonStyled name="Pesquisar" onPress={getData} />
             <ButtonStyled name="Gerar PDF" onPress={geraPDF} />
           </LinearGradient>
         </View>
-        <ScrollView style={{ width: "100%", height: Dimensions.get('window').height / 1.77 }}>
+        <ScrollView
+          style={{
+            width: "100%",
+            height: Dimensions.get("window").height / 1.77,
+          }}
+        >
           {dados.map((item, index) => (
             <View key={index} style={styles.card}>
               <Text style={styles.cardTitle}>{item.titulo}</Text>
               <Text style={styles.cardDescription}>{item.descricao}</Text>
               <Text style={styles.cardText}>
                 <Text style={styles.boldText}>Data: </Text>
-                {item.data_inicio.substring(0, 10)} {item.data_inicio.substring(11, 16)} - {item.data_fim.substring(11, 16)}
+                {item.data_inicio.substring(0, 10)}{" "}
+                {item.data_inicio.substring(11, 16)} -{" "}
+                {item.data_fim.substring(11, 16)}
               </Text>
-              {/* <Text style={styles.cardText}>
-                <Text style={styles.boldText}>Barbeiro: </Text>
-                {item.barbeiro}
-              </Text> */}
               <Text style={styles.cardText}>
                 <Text style={styles.boldText}>Cliente: </Text>
                 {item.cliente}
@@ -187,22 +198,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     marginTop: 20,
-    color: '#fff',
-    fontWeight: "900"
+    color: "#fff",
+    fontWeight: "900",
   },
   label: {
     marginTop: 20,
-    color: '#fff',
-    fontWeight: "700"
+    color: "#fff",
+    fontWeight: "700",
   },
   dateContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   pickerContainer: {
-    width: '48%'
+    width: "48%",
   },
   gradient: {
     alignItems: "center",
@@ -215,19 +226,19 @@ const styles = StyleSheet.create({
     margin: 10,
     borderColor: "#ddd",
     borderWidth: 1,
-    color: "#fff"
+    color: "#fff",
   },
   cardTitle: {
     fontFamily: "Montserrat_700Bold",
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff"
+    color: "#fff",
   },
   cardDescription: {
     fontFamily: "Montserrat_400Regular",
     fontSize: 14,
     color: "#fff",
-    marginBottom: 6
+    marginBottom: 6,
   },
   cardText: {
     fontSize: 14,
@@ -238,5 +249,5 @@ const styles = StyleSheet.create({
   boldText: {
     fontFamily: "Montserrat_700Bold",
     color: "#fff",
-  }
+  },
 });
