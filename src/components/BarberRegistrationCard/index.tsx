@@ -9,8 +9,6 @@ import api from "../../services/api";
 import { RegisterBarberProps } from "../../types/barber";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
-import { useNavigation } from "@react-navigation/native";
-import * as FileSystem from "expo-file-system";
 
 export default function BarberRegistrationCard({
   barber,
@@ -20,7 +18,6 @@ export default function BarberRegistrationCard({
   onSearch: (search: boolean) => void;
 }) {
   const token = useSelector((state: RootState) => state.auth.token);
-  const navigation = useNavigation();
 
   const [search, setSearch] = useState(false);
   const [deleteRegister, setDeleteRegister] = useState(false);

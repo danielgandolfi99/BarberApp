@@ -30,9 +30,6 @@ export default function CameraSendImageModal({
     }
   };
 
-  console.log(selectedImage);
-
-
   const takePicture = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -42,11 +39,10 @@ export default function CameraSendImageModal({
 
     try {
       if (cameraRef.current) {
-        const { uri } = await cameraRef.current.takePictureAsync({ quality: 0.5  });
-        // onSetImage(uri);
+        const { uri } = await cameraRef.current.takePictureAsync({
+          quality: 0.5,
+        });
         setSelectedImage(uri);
-        // onClose(false);
-        // onUpdateImage();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -138,7 +134,7 @@ export default function CameraSendImageModal({
             color="error"
             title="Cancelar"
             containerStyle={{ marginBottom: 10 }}
-            onPress={() => setSelectedImage('')}
+            onPress={() => setSelectedImage("")}
           />
         </View>
       )}

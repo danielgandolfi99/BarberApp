@@ -16,9 +16,6 @@ const ConfirmarConta = () => {
   const [code, setCode] = useState("");
   const userId = useSelector((state: RootState) => state.user.user_id);
   const token = useSelector((state: RootState) => state.auth.token);
-  const barbeiroId = useSelector((state: RootState) => state.user.barbeiro_id);
-
-  console.log(userId);
 
   const goBack = () => {
     navigation.goBack();

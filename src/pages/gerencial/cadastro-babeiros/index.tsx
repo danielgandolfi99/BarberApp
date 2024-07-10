@@ -1,9 +1,5 @@
 import { ActivityIndicator, Modal, ScrollView, View } from "react-native";
-import { styles } from "../../../components/stylesComponents";
 import ButtonStyled from "../../../components/ButtonStyled";
-import { Avatar, Card, Text } from "@rneui/base";
-import Icon from "react-native-vector-icons/AntDesign";
-import { LinearGradient } from "expo-linear-gradient";
 import Header from "../../../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import BarberRegistrationCard from "../../../components/BarberRegistrationCard";
@@ -49,8 +45,6 @@ const CadastroBarbeiros = () => {
 
   const [visibleModal, setVisibleModal] = useState(false);
 
-  console.log(token);
-
   return (
     <View style={{ backgroundColor: "#fff", flex: 1, alignItems: "center" }}>
       <Header
@@ -59,7 +53,8 @@ const CadastroBarbeiros = () => {
         onNavegatePage={handleReturn}
       />
       <ScrollView style={{ height: "80%" }}>
-        {data && data.length > 0 &&
+        {data &&
+          data.length > 0 &&
           data.map((value, index) => (
             <BarberRegistrationCard
               key={index}

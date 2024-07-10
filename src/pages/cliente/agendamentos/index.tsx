@@ -11,8 +11,6 @@ import { AgendaClienteProps } from "../../../types/agendamento";
 const AgendaCliente = () => {
   const navigation = useNavigation();
   const token = useSelector((state: RootState) => state.auth.token);
-  const [loading, setLoading] = useState(true);
-  const [agendamentos, setAgendamentos] = useState<AgendaClienteProps[]>([]);
   const [search, setSearch] = useState(true);
   const clienteId = useSelector((state: RootState) => state.user.cliente_id);
   const [data, setData] = useState<AgendaClienteProps[]>([]);
@@ -24,9 +22,6 @@ const AgendaCliente = () => {
   const handleScheduleDeleted = () => {
     setSearch(true);
   };
-
-  console.log(data)
-  console.log(clienteId)
 
   useEffect(() => {
     if (search) {
@@ -55,7 +50,6 @@ const AgendaCliente = () => {
                   );
                 }
               }
-              
             );
             setData(sortedData);
           }

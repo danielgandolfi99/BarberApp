@@ -1,14 +1,11 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Button, Card } from "@rneui/base";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Card } from "@rneui/base";
 import { RegisterServiceProps } from "../../types/services";
 import { useDispatch } from "react-redux";
-import { setAgendamento, setIdServico } from "../../services/redux/agendamento";
-import { AgendamentoProps } from "../../types/agendamento";
+import { setIdServico } from "../../services/redux/agendamento";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { RootState } from "../../services/redux/store";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from "react-native-vector-icons/Feather";
 
 export default function ServiceCard({
   service,
@@ -31,12 +28,15 @@ export default function ServiceCard({
       <View style={styles.cardContent}>
         <View style={styles.textContainer}>
           <Text style={styles.serviceTitle}>{service.titulo}</Text>
-          <Text
-            style={styles.servicePrice}
-          >{`R$ ${service.valor} • 1hr`}</Text>
+          <Text style={styles.servicePrice}>{`R$ ${service.valor} • 1hr`}</Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={handleAgendamento}>
-          <Icon name="clock" size={12} color="#fff" style={styles.bookButtonIcon} />
+          <Icon
+            name="clock"
+            size={12}
+            color="#fff"
+            style={styles.bookButtonIcon}
+          />
           <Text style={styles.buttonText}>AGENDAR</Text>
         </TouchableOpacity>
       </View>
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#06D6A0",
     borderRadius: 5,
     paddingVertical: 10,

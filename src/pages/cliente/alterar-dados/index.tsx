@@ -1,6 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Button } from "@rneui/base";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   Alert,
@@ -11,7 +10,6 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-// import { RegisterUserProps } from "../../types/user";
 import api from "../../../services/api";
 import TextInputStyled from "../../../components/TextInputStyled";
 import { stylesModal } from "../../login";
@@ -35,12 +33,12 @@ const AlterarDadosCliente = () => {
   const handleUpdateUser = () => {
     setSearch(true);
     if (search) {
-    const updateRegister = {
-      nome: nome ? nome : null,
-      sobrenome: sobrenome ? sobrenome : null,
-      celular: celular ? celular : null,
-      senha: password ? password : null,
-    };
+      const updateRegister = {
+        nome: nome ? nome : null,
+        sobrenome: sobrenome ? sobrenome : null,
+        celular: celular ? celular : null,
+        senha: password ? password : null,
+      };
       api
         .patch(`/users/${userId}`, updateRegister, {
           headers: {
@@ -48,7 +46,6 @@ const AlterarDadosCliente = () => {
           },
         })
         .then((response) => {
-          console.log(response)
           if (response.status === 200) {
             Alert.alert("Dados alterados com sucesso!");
             navigation.navigate({ name: "Tela Inicial" } as never);

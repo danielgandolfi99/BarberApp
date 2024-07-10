@@ -9,16 +9,12 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import { Avatar, Button, Dialog } from "@rneui/base";
+import { Button } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
 import TextInputStyled from "../TextInputStyled";
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import ButtonStyled from "../ButtonStyled";
 import Icon from "react-native-vector-icons/AntDesign";
-import CameraSendImageModal from "./CameraSendImageModal";
-import * as ImagePicker from "expo-image-picker";
-import { RegisterBarberProps } from "../../types/barber";
 import api from "../../services/api";
 import { stylesModal } from "../../pages/login";
 import { useSelector } from "react-redux";
@@ -39,9 +35,6 @@ export default function BarberRegistrationModal({
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [image, setImage] = useState<string | null>(null);
-  // const [showModal, setShowModal] = useState(false);
-  // const [modalCamera, setModalCamera] = useState(false);
   const [search, setSearch] = useState(false);
 
   function isValidEmail() {
@@ -129,27 +122,6 @@ export default function BarberRegistrationModal({
     }
   }, [search]);
 
-  // const pickImageFromGallery = async () => {
-  //   setShowModal(false);
-  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //   if (status !== "granted") {
-  //     alert("O aplicativo não possui permissão para utilizar a câmera!");
-  //     return;
-  //   }
-
-  //   const result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //     allowsEditing: true,
-  //     aspect: [4, 3],
-  //     quality: 1,
-  //   });
-
-  //   if (!result.canceled && result.assets.length > 0) {
-  //     const selectedImage = result.assets[0];
-  //     setImage(selectedImage.uri);
-  //   }
-  // };
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -178,14 +150,6 @@ export default function BarberRegistrationModal({
         </View>
         <ScrollView style={styles.scrollView}>
           <View style={styles.modalContent}>
-            {/* <Button onPress={() => setShowModal(true)} color="transparent">
-              <Avatar
-                size={80}
-                rounded
-                containerStyle={{ backgroundColor: "#D9D9D9" }}
-                source={{ uri: image || " " }}
-              />
-            </Button> */}
             <TextInputStyled
               textName="Nome"
               value={nome}
@@ -224,46 +188,6 @@ export default function BarberRegistrationModal({
           </View>
         </ScrollView>
       </LinearGradient>
-      {/* <Dialog
-        animationType="slide"
-        transparent={true}
-        isVisible={showModal}
-        onBackdropPress={() => setShowModal(false)}
-      >
-        <View
-          style={{
-            backgroundColor: "#fff",
-            padding: 10,
-            borderRadius: 10,
-            width: "100%",
-          }}
-        >
-          <View style={{ marginBottom: 15 }}>
-            <Button
-              title="Abrir Camera"
-              color="#9D4EDD"
-              onPress={() => {
-                setModalCamera(true);
-                setShowModal(false);
-              }}
-            />
-          </View>
-          <View style={{ marginBottom: 0 }}>
-            <Button
-              title="Abrir Galeria"
-              color="#9D4EDD"
-              onPress={pickImageFromGallery}
-            />
-          </View>
-        </View>
-      </Dialog> */}
-      {/* <Modal visible={modalCamera} onRequestClose={() => setModalCamera(false)}>
-        <CameraSendImageModal
-          onClose={setModalCamera}
-          onUpdateImage={() => setSearch(true)}
-          onSetImage={setImage}
-        />
-      </Modal> */}
       <Modal
         transparent={true}
         animationType="none"

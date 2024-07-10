@@ -6,7 +6,6 @@ import IconCheck from "react-native-vector-icons/Ionicons";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
-import { useNavigation } from "@react-navigation/native";
 import { Dialog } from "@rneui/themed";
 import { AgendaBarbeiroProps } from "../../types/agendamento";
 import moment from "moment";
@@ -20,7 +19,6 @@ export default function ScheduleCard({
   onSearch: (formatDate: string) => void;
 }) {
   const token = useSelector((state: RootState) => state.auth.token);
-  const navigation = useNavigation();
 
   const startTime = moment(schedule.dt_inicio, "DD/MM/YYYY HH:mm").format(
     "HH:mm"

@@ -78,12 +78,7 @@ const TelaInicial = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleReturn = () => {
-    navigation.goBack();
-  };
-
   useEffect(() => {
-    // if (isSearching) {
     api
       .get("/servicos", {
         headers: {
@@ -102,7 +97,6 @@ const TelaInicial = () => {
       .finally(() => {
         setIsSearching(false);
       });
-    // }
   }, []);
 
   useEffect(() => {
@@ -135,7 +129,7 @@ const TelaInicial = () => {
       <ImageBackground
         source={{
           uri: "https://s3-alpha-sig.figma.com/img/0a9b/ca71/2fd36a435de4cdae556e9f1744e5c802?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ChxBPURBr4jRTdXaNA7DagxtgSca45Rff63NNrKqtaz9ZQYuio85HmXeUgcipTBxWyRnkOsEn-ei0MBe~grN04RubnaZ80M1g7l6vg3zF7pMQd7QLnM2wXjxq4xJ45~lvCV~NtlIBr-P4qZ4ZSV3nf7nww79hjY-SCuyInK7qnuvL-ZsKAUU~zH7mYq14H9y-DGp0AD4OszAUt6NYWmSc6djmEB9GCAOJOFyvMxpIovaYZn03yK~IUmH29pYGRxmc5IqEQxOlxZxpmB3xWPDkc4zKPcnFByC0oydSvjuI4io0ou2pi4jJ7~sfDFPjxBLu3lIWpiDtwhFMzXPql-hOw__",
-        }} // Replace with actual image URL
+        }}
         style={styles.headerImage}
       >
         <LinearGradient

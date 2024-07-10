@@ -21,7 +21,6 @@ import { stylesModal } from "../login";
 import { RegisterServiceProps } from "../../types/services";
 import moment, { Moment } from "moment";
 import "moment/locale/pt-br";
-import { AgendamentoProps } from "../../types/agendamento";
 import { Alert } from "react-native";
 import { Dialog } from "@rneui/themed";
 
@@ -116,7 +115,7 @@ const PageAgendamento = () => {
       }
     }
 
-    if(new Date().getHours() > 18){
+    if (new Date().getHours() > 18) {
       dates.shift();
     }
 
@@ -205,16 +204,6 @@ const PageAgendamento = () => {
   const handleScroll = (event: any) => {
     setScrollX(event.nativeEvent.contentOffset.x);
   };
-
-  // const getOpacity = (index: number) => {
-  //   const screenWidth = Dimensions.get('window').width;
-  //   const itemWidth = 63;
-  //   const midPoint = (screenWidth - itemWidth) / 2;
-  //   const itemCenter = itemWidth * index - scrollX + itemWidth / 2;
-  //   const distanceFromCenter = Math.abs(midPoint - itemCenter);
-  //   const maxDistance = screenWidth / 1;
-  //   return scrollX === 0 && index === 0 ? 1 : 1 - Math.min(distanceFromCenter / maxDistance, 0.8);
-  // };
 
   const checkDisabledTime = (dateTime: number): boolean => {
     if (!Array.isArray(freeTime) || freeTime.length === 0) {

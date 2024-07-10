@@ -12,7 +12,6 @@ import {
 import { Button } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import TextInputStyled from "../../TextInputStyled";
 import ButtonStyled from "../../ButtonStyled";

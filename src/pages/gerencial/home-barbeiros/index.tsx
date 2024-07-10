@@ -1,12 +1,10 @@
-import { Modal, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import Header from "../../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import HomeBarberButton from "../../../components/HomeBarberButton";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../services/redux/store";
-import { clearToken } from "../../../services/redux/authSlice";
 import { BackHandler } from "react-native";
 
 const HomeBarbeiros = () => {

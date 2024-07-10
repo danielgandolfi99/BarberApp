@@ -5,7 +5,6 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
-import { useNavigation } from "@react-navigation/native";
 import { RegisterServiceProps } from "../../types/services";
 import { Dialog } from "@rneui/themed";
 
@@ -17,12 +16,9 @@ export default function ServiceRegistrationCard({
   onServiceDeleted: () => void;
 }) {
   const token = useSelector((state: RootState) => state.auth.token);
-  const navigation = useNavigation();
-
   const [deleteService, setDeleteService] = useState(false);
 
   const handleDeleteService = () => {
-    console.log("Service Object:", service);
     api
       .delete(`/servicos/${service.servico_id}`, {
         headers: {

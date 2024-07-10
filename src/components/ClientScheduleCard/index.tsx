@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, Modal, Alert } from "react-native";
 import { Button, Card, Dialog } from "@rneui/base";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
@@ -17,7 +10,7 @@ import StarRating from "react-native-star-rating-widget";
 import api from "../../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/redux/store";
-import moment, { Moment } from "moment";
+import moment from "moment";
 
 export default function ClientScheduleCard({
   schedule,
@@ -37,8 +30,6 @@ export default function ClientScheduleCard({
     setModalVisible(true);
   };
 
-  console.log(schedule);
-
   const handleCloseRating = () => {
     setModalVisible(false);
   };
@@ -52,7 +43,6 @@ export default function ClientScheduleCard({
   };
 
   const handleDeleteSchedule = () => {
-    console.log("Service Object:", schedule);
     api
       .delete(`/horarios/${schedule.atendimento_id}`, {
         headers: {
@@ -115,13 +105,7 @@ export default function ClientScheduleCard({
 
   return (
     <>
-      <Card
-        containerStyle={
-          // schedule.finalizado
-          //   ? styles.cardContainerFinalizado
-          styles.cardContainer
-        }
-      >
+      <Card containerStyle={styles.cardContainer}>
         <View style={styles.cardContent}>
           <View style={styles.textContainer}>
             <Text style={styles.serviceTitle}>
@@ -142,14 +126,24 @@ export default function ClientScheduleCard({
           </View>
           <View style={styles.iconContainer}>
             {schedule.finalizado ? (
-              <Button
-                containerStyle={{ alignSelf: "flex-end" }}
-                color="transparent"
-                buttonStyle={styles.iconButton}
-                onPress={handleEvaluate}
-              >
-                <Icon name="star" size={30} color="#FFD700" />
-              </Button>
+              schedule.avaliacao ? (
+                <Icon
+                  name="star"
+                  size={30}
+                  color="#Feefde"
+                  style={{ margin: 10 }}
+                  onPress={handleEvaluate}
+                />
+              ) : (
+                <Button
+                  containerStyle={{ alignSelf: "flex-end" }}
+                  color="transparent"
+                  buttonStyle={styles.iconButton}
+                  onPress={handleEvaluate}
+                >
+                  <Icon name="star" size={30} color="#FFD700" />
+                </Button>
+              )
             ) : (
               <Button
                 containerStyle={{ alignSelf: "flex-end" }}
@@ -241,13 +235,6 @@ export default function ClientScheduleCard({
                   onPress={handleCloseRating}
                   buttonStyle={{ padding: 10, borderRadius: 5 }}
                 />
-                {/* <Button
-                  color="transparent"
-                  title="Fechar"
-                  titleStyle={{ color: "green" }}
-                  onPress={handleSetRating}
-                  buttonStyle={{ padding: 0 }}
-                /> */}
               </View>
             </View>
           )}
@@ -264,12 +251,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     backgroundColor: "#9D4EDD",
   },
-  // cardContainerFinalizado: {
-  //   padding: 0,
-  //   borderRadius: 8,
-  //   marginBottom: 4,
-  //   backgroundColor: "#ececec",
-  // },
   cardContent: {
     flexDirection: "row",
     alignItems: "center",
